@@ -2,12 +2,8 @@
 
 namespace App\Http\Controllers\Auth;
 
-use App\Models\User;
-use GuzzleHttp\Psr7\Request;
 use App\Services\Auth\AuthService;
 use App\Http\Controllers\Controller;
-use App\Http\Resources\UserResource;
-use App\Http\Requests\StorProfileRequest;
 use App\Http\Requests\AuthRequest\ResendCode;
 use App\Http\Requests\AuthRequest\LoginRequest;
 use App\Http\Requests\AuthRequest\RegisterRequest;
@@ -146,22 +142,22 @@ class AuthController extends Controller
     }
 
     /**
-     * Login a user using Google OAuth.
-     *
-     * @param GoogelloginRequest $request The request containing Google access token.
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function loginwithGoogel(GoogelloginRequest $request)
-    {
-        // Validate the request data
-        $validationData = $request->validated();
+    //  * Login a user using Google OAuth.
+    //  *
+    //  * @param GoogelloginRequest $request The request containing Google access token.
+    //  * @return \Illuminate\Http\JsonResponse
+    //  */
+    // public function loginwithGoogel(GoogelloginRequest $request)
+    // {
+    //     // Validate the request data
+    //     $validationData = $request->validated();
 
-        // Call the AuthService to login the user using Google
-        $result = $this->authService->loginwithgoogel($validationData['googleToken']);
+    //     // Call the AuthService to login the user using Google
+    //     $result = $this->authService->loginwithgoogel($validationData['googleToken']);
 
-        // Return a success or error response based on the result
-        return $result['status'] === 200
-            ? self::success($result['data'], $result['message'], $result['status'])
-            : self::error(null, $result['message'], $result['status']);
-    }
+    //     // Return a success or error response based on the result
+    //     return $result['status'] === 200
+    //         ? self::success($result['data'], $result['message'], $result['status'])
+    //         : self::error(null, $result['message'], $result['status']);
+    // }
 }

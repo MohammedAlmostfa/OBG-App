@@ -5,14 +5,10 @@ namespace App\Services\Auth;
 use Exception;
 use App\Models\User;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\Redis;
 use App\Mail\SendForgetPasswordCodeMail;
-use Illuminate\Http\Exceptions\HttpResponseException;
-use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 class ForgetPasswordService
 {
@@ -26,12 +22,13 @@ class ForgetPasswordService
     {
         try {
             // Create a unique cache key for the user's email
-            $key = $email;
+            $key = 'resetPassword_' . $email;
+
             Cache::delete($key);
 
             // Generate a 6-digit random code and store it in the cache for 1 hour
             $code = Cache::remember($key, 3600, function () {
-                return random_int(100000, 999999);
+                return random_int(1000, 9999);
             });
 
             // Send the code to the user's email
@@ -65,11 +62,13 @@ class ForgetPasswordService
     {
         try {
             // Create a unique cache key for the user's email
-            $key = $email;
+            $key = 'resetPassword_' . $email;
+
 
             // Check if the code exists in the cache
             if (Cache::has($key)) {
                 $cached_code = Cache::get($key);
+
 
                 // Verify if the provided code matches the cached code
                 if ($code != $cached_code) {
@@ -116,11 +115,12 @@ class ForgetPasswordService
     public function changePassword($email, $password, $code)
     {
         try {
-            $key = $email;
+            $key = 'resetPassword_' . $email;
 
             // Check if the code exists in the cache
             if (Cache::has($key)) {
                 $cached_code = Cache::get($key);
+
 
                 // Verify if the provided code matches the cached code
                 if ($code != $cached_code) {

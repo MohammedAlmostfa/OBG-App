@@ -4,9 +4,7 @@ namespace App\Services\Auth;
 
 use Exception;
 use Carbon\Carbon;
-use App\Models\City;
 use App\Models\User;
-use App\Models\Country;
 use App\Events\Registered;
 use Tymon\JWTAuth\Facades\JWTAuth;
 use Illuminate\Support\Facades\Log;
@@ -60,7 +58,7 @@ class AuthService
 
             // Generate a random 6-digit code and store it in the cache
             $code = Cache::remember($verifkey, 3600, function () {
-                return random_int(100000, 999999);
+                return random_int(1000, 9999);
             });
 
             // Trigger the Registered event to send the verification email
@@ -134,16 +132,16 @@ class AuthService
                 Cache::forget($verifkey);
                 Cache::forget($userDataKey);
 
-                // Fetch all cities
-                $cities = Cache::rememberForever('cities_list', function () {
-                    return City::select('id', 'city_name')->get();
-                });
+                // // Fetch all cities
+                // $cities = Cache::rememberForever('cities_list', function () {
+                //     return City::select('id', 'city_name')->get();
+                // });
                 return [
                     'message' => __('auth.email_verified_and_registered'),
                     'status' => 200,
                     'data' => [
                         'token' => $token, // Return the generated token
-                        'cities' => $cities, // Return cities for new users
+                     //   'cities' => $cities, // Return cities for new users
                     ],
                 ];
             } else {
@@ -184,30 +182,14 @@ class AuthService
             // Check if a verification code already exists in the cache
             if (Cache::has($verifkey)) {
 
-                // Get the timestamp when the code was stored
-                $updatedAt = Cache::get($verifkey . '_timestamp');
-                $requestedAt = now();
-                // Calculate the difference in minutes
-                $diffInMinutes = $requestedAt->diffInMinutes($updatedAt);
 
-                //     if ($diffInMinutes <= 600) {
-                // Calculate the time in minutes (optional: round it)
-                //      $minutes = ceil($diffInMinutes / 60);
-                //      return [
-                //         'status' => 400,
-                //        'message' => [
-                //           'errorDetails' => [__('auth.verification_code_error', ['minutes' => $minutes])],
-                //       ],
-                //   ];
-                //  } else {
                 Cache::forget($verifkey);
 
-                //  }
 
 
                 // Generate a new 6-digit random code and store it in the cache for 1 hour
                 $code = Cache::remember($verifkey, 3600, function () {
-                    return random_int(100000, 999999);
+                    return random_int(1000, 9999);
                 });
 
                 // Trigger the Registered event to send the new verification email
@@ -217,9 +199,6 @@ class AuthService
                 return [
                     'message' => __('auth.verification_success'),
                     'status' => 200,
-                    'data' => [
-                        'email' => $updatedAt,
-                    ],
                 ];
             } else {
                 // If no code exists in the cache, return an error
