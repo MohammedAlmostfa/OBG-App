@@ -2,14 +2,13 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Verify Your Email Address - Wasalni</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Verify Your Email Address - OBGAPP</title>
     <style>
-        /* General Styles */
         body {
-            font-family: Arial, sans-serif;
-            background-color: #f9f9f9;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #F5F5DC;
             margin: 0;
             padding: 0;
             color: #333333;
@@ -17,64 +16,91 @@
 
         .container {
             max-width: 600px;
-            margin: 20px auto;
+            margin: 40px auto;
             background-color: #ffffff;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            padding: 40px 30px;
+            border-radius: 12px;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.08);
+            border-top: 8px solid #FFE09C;
+        }
+
+        .logo {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .logo img {
+            height: 50px;
         }
 
         h1 {
             font-size: 24px;
             text-align: center;
-            margin-bottom: 20px;
+            background-color: #FFE09C;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 0 auto 30px auto;
             color: #333333;
         }
 
         p {
             font-size: 16px;
-            line-height: 1.6;
-            color: #555555;
+            line-height: 1.7;
+            color: #666666;
             margin-bottom: 20px;
         }
 
         .code {
-            font-size: 24px;
+            font-size: 28px;
             font-weight: bold;
             text-align: center;
-            margin: 20px 0;
-            color: #007bff;
+            padding: 16px 30px;
+            background-color: #FFF6D1;
+            color: #333333;
+            border: 2px dashed #FFE09C;
+            border-radius: 8px;
+            width: max-content;
+            margin: 30px auto;
+            letter-spacing: 2px;
         }
 
         .footer {
+            margin-top: 40px;
             text-align: center;
-            margin-top: 30px;
             font-size: 14px;
-            color: #888888;
+            color: #999999;
+            border-top: 1px solid #eee;
+            padding-top: 20px;
+        }
+
+        .app-name {
+            font-weight: bold;
+            color: #333333;
         }
     </style>
 </head>
 
 <body>
     <div class="container">
-        <!-- Heading -->
-        <h1>Verify Your Email Address</h1>
+        <!-- Logo placeholder -->
+        <div class="logo">
+            <img src="https://via.placeholder.com/120x40?text=OBGAPP" alt="OBGAPP Logo" />
+        </div>
 
-        <!-- Greeting -->
+        <h1>Email Verification</h1>
+
         <p>Hello {{ $user['email'] }},</p>
 
-        <!-- Verification Code -->
-        <p>Your verification code is:</p>
+        <p>Thank you for registering with <span class="app-name">OBGAPP</span>.</p>
+        <p>Please use the verification code below to complete your registration:</p>
+
         <div class="code">{{ $code }}</div>
 
-        <!-- Instructions -->
-        <p>Please use this code to verify your email address and complete your registration on <strong>Wasalni</strong>.
-        </p>
+        <p>This code is valid for a limited time. If you did not request this, please ignore this email.</p>
 
-        <!-- Footer -->
         <div class="footer">
-            <p>If you did not create an account, no further action is required.</p>
-            <p>&copy; 2025 Wasalni.</p>
+            <p>If you need help, please contact our support team at support@obgapp.com.</p>
+            <p>&copy; 2025 OBGAPP. All rights reserved.</p>
         </div>
     </div>
 </body>

@@ -11,20 +11,8 @@ class Province extends Model
 
     protected $fillable = ['name', 'country_id'];
 
-    public $casts=[ 'name'=>'string'];
-    /**
-      * Accessor to get the city name in current application locale
-      *
-      * Returns the city name in the current application language,
-      * or null if not available for the current locale.
-      *
-      * @return string|null The localized city name or null
-      */
-    public function getNameAttribute(): ?string
-    {
-        $locale = app()->getLocale();
-        return $this->city_name[$locale] ?? null;
-    }
+
+    protected $casts = ['name' => 'json'];
 
 
     public function country()

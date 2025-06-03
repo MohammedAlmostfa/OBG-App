@@ -5,13 +5,37 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Casts\Attribute;
+use App\Models\User;
+use App\Models\Country;
+use App\Models\Province;
 
+/**
+ * Class Profile
+ *
+ * This model represents a user's extended profile data, including
+ * personal details like gender, birthday, contact information, and location.
+ *
+ * @property int $id
+ * @property int $user_id
+ * @property int $gender
+ * @property string $genderStatus
+ * @property \Illuminate\Support\Carbon|null $birthday
+ * @property string $phone
+ * @property string $address
+ * @property int $country_id
+ * @property int $province_id
+ *
+ * @property-read User $user
+ * @property-read Country $country
+ * @property-read Province $province
+ */
 class Profile extends Model
 {
     use HasFactory;
 
     /**
-     * The attributes that are mass assignable.
+     * The attributes that are mass assignable (fillable via forms or APIs).
      *
      * @var array<string>
      */
@@ -21,27 +45,76 @@ class Profile extends Model
         'birthday',
         'phone',
         'address',
-
+        'country_id',
+        'province_id',
     ];
 
+    /**
+     * The attributes that should be cast to native types.
+     *
+     * @var array<string, string>
+     */
     protected $casts = [
-     'user_id' => 'integer',
-     'gender' => 'string',
-     'birthday' => 'date',
-     'phone' => 'string',
-     'address' => 'string',
-
-];
+        'user_id' => 'integer',
+        'gender' => 'integer',
+        'birthday' => 'date',
+        'phone' => 'string',
+        'address' => 'string',
+        'country_id' => 'integer',
+        'province_id' => 'integer',
+    ];
 
     /**
-     * Define an inverse one-to-one relationship with the User model.
+     * A map to represent gender in human-readable format.
+     * 0 => male, 1 => female
+     */
+    const GENDER_MAP = [
+        0 => 'male',
+        1 => 'female',
+    ];
+
+    /**
+     * Accessor and mutator for the gender field.
+     * Converts numeric value to a readable string when getting,
+     * and converts string back to numeric when setting.
      *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     * @return \Illuminate\Database\Eloquent\Casts\Attribute
+     */
+    public function genderStatus(): Attribute
+    {
+        return Attribute::make(
+            get: fn ($value) => self::GENDER_MAP[$value] ?? 'UNKNOWN',
+            set: fn ($value) => array_search($value, self::GENDER_MAP, true)
+        );
+    }
+
+    /**
+     * Get the user that this profile belongs to.
+     *
+     * @return BelongsTo
      */
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
     }
 
+    /**
+     * Get the country associated with this profile.
+     *
+     * @return BelongsTo
+     */
+    public function country(): BelongsTo
+    {
+        return $this->belongsTo(Country::class);
+    }
 
+    /**
+     * Get the province associated with this profile.
+     *
+     * @return BelongsTo
+     */
+    public function province(): BelongsTo
+    {
+        return $this->belongsTo(Province::class);
+    }
 }

@@ -261,7 +261,7 @@ class AuthService
             return [
                 'status' => 500,
                 'message' => [
-                    'errorDetails' => [__('auth.general_error')],
+                    'errorDetails' => __('general.failed'),
                 ],
             ];
         }
@@ -289,7 +289,7 @@ class AuthService
             return [
                 'status' => 500,
                 'message' => [
-                    'errorDetails' => [__('auth.general_error')],
+                    'errorDetails' => __('general.failed'),
                 ],
             ];
         }
@@ -320,11 +320,11 @@ class AuthService
             ];
         } catch (Exception $e) {
             // Log the error if token refresh fails
-            Log::error('Error in token refresh: ' . $e->getMessage());
+            Log::error(': ' . $e->getMessage());
             return [
                 'status' => 500,
                 'message' => [
-                    'errorDetails' => [__('auth.general_error')],
+                    'errorDetails' => __('general.failed'),
                 ],
             ];
         }

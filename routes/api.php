@@ -5,6 +5,8 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\CountryController;
 use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\Auth\ForgetPasswordController;
+use App\Http\Controllers\Auth\ProfileController;
+use App\Http\Controllers\ProvinceController;
 
 // Public routes (no authentication required)
 
@@ -30,11 +32,13 @@ Route::post('/changePassword', [ForgetPasswordController::class, 'changePassword
 Route::post('/checkEmail', [ForgetPasswordController::class, 'checkEmail']); // Checks if the email exists for password reset
 Route::post('/checkCode', [ForgetPasswordController::class, 'checkCode']); // Verifies a password reset code
 Route::apiResource('countries', CountryController::class);
+Route::get('provinces/country/{id}', [ProvinceController::class,'index']);
 
 
-Route::middleware('auth:api')->group(function () {
+Route::middleware('jwt')->group(function () {
+
+    Route::apiResource('profile', ProfileController::class);
+    Route::get('/me', [ProfileController::class, 'getme']); // Retrieves details of the logged-in user
 
 
-    // API resource routes for countries (CRUD operations)
-    // Handles CRUD for countries
 });

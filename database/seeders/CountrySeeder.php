@@ -14,6 +14,7 @@ class CountrySeeder extends Seeder
     public function run(): void
     {
         $countries = [
+            ['en' => 'Syria', 'ar' => 'سوريا'],
             ['en' => 'Saudi Arabia', 'ar' => 'السعودية'],
             ['en' => 'United Arab Emirates', 'ar' => 'الإمارات'],
             ['en' => 'Qatar', 'ar' => 'قطر'],
@@ -24,7 +25,6 @@ class CountrySeeder extends Seeder
             ['en' => 'Iraq', 'ar' => 'العراق'],
             ['en' => 'Jordan', 'ar' => 'الأردن'],
             ['en' => 'Lebanon', 'ar' => 'لبنان'],
-            ['en' => 'Syria', 'ar' => 'سوريا'],
             ['en' => 'Palestine', 'ar' => 'فلسطين'],
             ['en' => 'Egypt', 'ar' => 'مصر'],
             ['en' => 'Iran', 'ar' => 'إيران'],

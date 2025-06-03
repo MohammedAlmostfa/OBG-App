@@ -45,7 +45,7 @@ class ForgetPasswordService
             return [
                 'status' => 500,
                 'message' => [
-                    'errorDetails' => [__('auth.general_error')],
+                    'errorDetails' => __('general.failed'),
                 ],
             ];
         }
@@ -100,7 +100,7 @@ class ForgetPasswordService
             return [
                 'status' => 500,
                 'message' => [
-                    'errorDetails' => [__('auth.general_error')],
+                    'errorDetails' => __('general.failed'),
                 ],
             ];
         }
@@ -161,7 +161,7 @@ class ForgetPasswordService
                 return [
                     'status' => 400,
                     'message' => [
-                        'errorDetails' => [__('auth.invalid_key')],
+                        'errorDetails' => __('general.failed'),
                     ],
                 ];
             }
@@ -172,7 +172,7 @@ class ForgetPasswordService
             return [
                 'status' => 500,
                 'message' => [
-                    'errorDetails' => [__('auth.general_error')],
+                    'errorDetails' => __('general.failed'),
                 ],
             ];
         }
