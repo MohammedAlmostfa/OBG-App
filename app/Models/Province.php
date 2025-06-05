@@ -11,6 +11,7 @@ class Province extends Model
 
     protected $fillable = ['name', 'country_id'];
 
+    public $timestamps = false;
 
     protected $casts = ['name' => 'json'];
 

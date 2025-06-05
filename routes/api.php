@@ -6,7 +6,9 @@ use App\Http\Controllers\CountryController;
 use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\Auth\ForgetPasswordController;
 use App\Http\Controllers\Auth\ProfileController;
+use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\ProvinceController;
+use App\Http\Controllers\SubCategoryController;
 
 // Public routes (no authentication required)
 
@@ -31,8 +33,11 @@ Route::post('/resendCode', [AuthController::class, 'resendCode']); // Resends th
 Route::post('/changePassword', [ForgetPasswordController::class, 'changePassword']); // Handles password change
 Route::post('/checkEmail', [ForgetPasswordController::class, 'checkEmail']); // Checks if the email exists for password reset
 Route::post('/checkCode', [ForgetPasswordController::class, 'checkCode']); // Verifies a password reset code
-Route::apiResource('countries', CountryController::class);
+Route::get('countries', [CountryController::class,"index"]);
 Route::get('provinces/country/{id}', [ProvinceController::class,'index']);
+
+Route::get('categories', [CategoryController::class,"index"]);
+Route::get('subCategories/category/{id}', [SubCategoryController::class,'index']);
 
 
 Route::middleware('jwt')->group(function () {

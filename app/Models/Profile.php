@@ -10,26 +10,6 @@ use App\Models\User;
 use App\Models\Country;
 use App\Models\Province;
 
-/**
- * Class Profile
- *
- * This model represents a user's extended profile data, including
- * personal details like gender, birthday, contact information, and location.
- *
- * @property int $id
- * @property int $user_id
- * @property int $gender
- * @property string $genderStatus
- * @property \Illuminate\Support\Carbon|null $birthday
- * @property string $phone
- * @property string $address
- * @property int $country_id
- * @property int $province_id
- *
- * @property-read User $user
- * @property-read Country $country
- * @property-read Province $province
- */
 class Profile extends Model
 {
     use HasFactory;

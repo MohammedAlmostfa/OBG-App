@@ -8,20 +8,22 @@ return new class extends Migration {
     /**
      * Run the migrations.
      */
-    public function up(): void
+    public function up()
     {
-        Schema::create('countries', function (Blueprint $table) {
+        Schema::create('sub_categories', function (Blueprint $table) {
             $table->id();
-            $table->json('name')->unique();
+            $table->json('name');
+            $table->foreignId('category_id')->constrained('categories')->onDelete('cascade');
             $table->timestamps();
         });
     }
+
 
     /**
      * Reverse the migrations.
      */
     public function down(): void
     {
-        Schema::dropIfExists('countries');
+        Schema::dropIfExists('sub_categories');
     }
 };
