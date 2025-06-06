@@ -34,7 +34,7 @@ class CountryService
             return [
                 'status' => 500,
                 'message' => [
-                    'errorDetails' => ['An error occurred while retrieving cities.'],
+                    'errorDetails' => __('general.failed'),
                 ],
             ];
         }

@@ -36,7 +36,7 @@ class ProvinceService
             return [
                 'status' => 500,
                 'message' => [
-                    'errorDetails' => ['An error occurred while retrieving provinces.'],
+                    'errorDetails' => __('general.failed'),
                 ],
             ];
         }

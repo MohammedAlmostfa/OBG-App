@@ -24,7 +24,7 @@ class CategoryService
             return [
                 'status' => 500,
                 'message' => [
-                    'errorDetails' => ['An error occurred while retrieving categories.'],
+                    'errorDetails' => __('general.failed'),
                 ],
             ];
         }
