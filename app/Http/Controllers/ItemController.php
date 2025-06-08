@@ -11,16 +11,16 @@ use App\Http\Requests\ItemRequest\UpdateItemData;
 class ItemController extends Controller
 {
     /**
-     * The CountryService instance.
+     * The ItemService instance.
      *
-     * @var itemService
+     * @var ItemService
      */
-    private $ItemS;
+    private $itemService;
 
     /**
-     * Create a new CountryController instance.
+     * Inject the ItemService into the controller.
      *
-     * @param itemService $itemService
+     * @param ItemService $itemService
      */
     public function __construct(ItemService $itemService)
     {
@@ -28,43 +28,87 @@ class ItemController extends Controller
     }
 
     /**
-     * Display a listing of the resource.
+     * Display a listing of the items.
+     *
+     * @return \Illuminate\Http\JsonResponse
      */
     public function index()
     {
-        //
+        
     }
 
     /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
+     * Store a newly created item in storage.
+     *
+     * @param StoreItemData $request
+     * @return \Illuminate\Http\JsonResponse
      */
     public function store(StoreItemData $request)
     {
-        //
+        // Validate incoming request data
+        $validatedData = $request->validated();
+
+        // Call the service to handle storing logic
+        $result = $this->itemService->storeItem($validatedData);
+
+        // Return response based on result status
+        return $result['status'] === 200
+            ? self::success(null, $result['message'], $result['status'])
+            : self::error(null, $result['message'], $result['status']);
     }
 
-
     /**
-     * Update the specified resource in storage.
+     * Update the specified item in storage.
+     *
+     * @param UpdateItemData $request
+     * @param Item $item
+     * @return \Illuminate\Http\JsonResponse
      */
-    public function update(UpdateItemData $request, Item $item)
+    public function update(UpdateItemData $request,  $id)
     {
-        //
+        // Validate incoming request data
+        $validatedData = $request->validated();
+
+        // Call the service to handle update logic
+        $result = $this->itemService->updateItem($id, $validatedData);
+
+        // Return response based on result status
+        return $result['status'] === 200
+            ? self::success(null, $result['message'], $result['status'])
+            : self::error(null, $result['message'], $result['status']);
     }
 
     /**
-     * Remove the specified resource from storage.
+     * Soft delete the specified item.
+     *
+     * @param Item $item
+     * @return \Illuminate\Http\JsonResponse
      */
     public function destroy(Item $item)
     {
-        //
+        // Call the service to handle soft deletion
+        $result = $this->itemService->softDeleteItem($item);
+
+        // Return response based on result status
+        return $result['status'] === 200
+            ? self::success(null, $result['message'], $result['status'])
+            : self::error(null, $result['message'], $result['status']);
+    }
+
+    /**
+     * Permanently delete the specified item.
+     *
+     * @param Item $item
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function forceDestroy(Item $item)
+    {
+        // Call the service to handle permanent deletion
+        $result = $this->itemService->forceDeleteItem($item);
+
+        // Return response based on result status
+        return $result['status'] === 200
+            ? self::success(null, $result['message'], $result['status'])
+            : self::error(null, $result['message'], $result['status']);
     }
 }

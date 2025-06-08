@@ -7,6 +7,7 @@ use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\Auth\ForgetPasswordController;
 use App\Http\Controllers\Auth\ProfileController;
 use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\ItemController;
 use App\Http\Controllers\ProvinceController;
 use App\Http\Controllers\SubCategoryController;
 
@@ -45,5 +46,6 @@ Route::middleware('jwt')->group(function () {
     Route::apiResource('profile', ProfileController::class);
     Route::get('/me', [ProfileController::class, 'getme']); // Retrieves details of the logged-in user
 
+Route::apiResource('items', ItemController::class);
 
 });
