@@ -61,11 +61,11 @@ class ItemService
                 'subCategory_id' => $data['subCategory_id'] ?? $item->subCategory_id,
                 'name'           => $data['name'] ?? $item->name,
                 'price'          => $data['price'] ?? $item->price,
-          // 'type'           => $data["type"]?? $item->type,
+                // 'type'           => $data["type"]?? $item->type,
                 'description'    => $data['description'] ?? $item->description,
                 'details'        => $data['details'] ?? $item->details,
             ]);
-Log::error('updateItem $data content:', $data);
+            Log::error('updateItem $data content:', $data);
             return [
                 'status' => 200,
                 'message' => __('item.update_successful'),

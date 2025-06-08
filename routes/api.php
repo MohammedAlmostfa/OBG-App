@@ -9,6 +9,7 @@ use App\Http\Controllers\Auth\ProfileController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\ItemController;
 use App\Http\Controllers\ProvinceController;
+use App\Http\Controllers\RateController;
 use App\Http\Controllers\SubCategoryController;
 
 // Public routes (no authentication required)
@@ -34,18 +35,18 @@ Route::post('/resendCode', [AuthController::class, 'resendCode']); // Resends th
 Route::post('/changePassword', [ForgetPasswordController::class, 'changePassword']); // Handles password change
 Route::post('/checkEmail', [ForgetPasswordController::class, 'checkEmail']); // Checks if the email exists for password reset
 Route::post('/checkCode', [ForgetPasswordController::class, 'checkCode']); // Verifies a password reset code
-Route::get('countries', [CountryController::class,"index"]);
-Route::get('provinces/country/{id}', [ProvinceController::class,'index']);
+Route::get('countries', [CountryController::class, "index"]);
+Route::get('provinces/country/{id}', [ProvinceController::class, 'index']);
 
-Route::get('categories', [CategoryController::class,"index"]);
-Route::get('subCategories/category/{id}', [SubCategoryController::class,'index']);
+Route::get('categories', [CategoryController::class, "index"]);
+Route::get('subCategories/category/{id}', [SubCategoryController::class, 'index']);
 
 
 Route::middleware('jwt')->group(function () {
 
     Route::apiResource('profile', ProfileController::class);
+    Route::apiResource('rates', RateController::class);
     Route::get('/me', [ProfileController::class, 'getme']); // Retrieves details of the logged-in user
 
-Route::apiResource('items', ItemController::class);
-
+    Route::apiResource('items', ItemController::class);
 });
