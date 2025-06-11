@@ -8,7 +8,7 @@ class Photo extends Model
 {
     protected $fillable = ['url'];
 
-    public function imageable()
+    public function photoable()
     {
         return $this->morphTo();
     }

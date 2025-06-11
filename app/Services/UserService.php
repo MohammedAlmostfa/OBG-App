@@ -56,7 +56,13 @@ class UserService
     {
         try {
             // Retrieve items belonging to the user
-            $items = Item::select(['user_id', 'price', 'name'])
+            $items = Item::select(['id', 'user_id', 'price', 'name'])
+                ->with(['photos' => function ($query) {
+                    $query->select('id', 'url', 'photoable_id')
+                        ->orderBy('id')
+                        ->limit(1);
+                }])
+
                 ->where('user_id', $id)
                 ->get();
 
@@ -76,25 +82,24 @@ class UserService
         }
     }
     public function getUserData($id)
-{
-    try {
-        $user = User::select(['id', 'name' ])
-            ->withCount(['ratings as countRatings', 'items as countItems'])
-            ->findOrFail($id);
+    {
+        try {
+            $user = User::select(['id', 'name'])
+                ->withCount(['ratings as countRatings', 'items as countItems'])
+                ->findOrFail($id);
 
-        return [
-            'status'  => 200,
-            'message' => __('user.get_successful'),
-            'data'    => $user,
-        ];
-    } catch (Exception $e) {
-        Log::error('Error in getUserData: ' . $e->getMessage());
+            return [
+                'status'  => 200,
+                'message' => __('user.get_successful'),
+                'data'    => $user,
+            ];
+        } catch (Exception $e) {
+            Log::error('Error in getUserData: ' . $e->getMessage());
 
-        return [
-            'status'  => 500,
-            'message' => __('general.failed'),
-        ];
+            return [
+                'status'  => 500,
+                'message' => __('general.failed'),
+            ];
+        }
     }
-}
-
 }

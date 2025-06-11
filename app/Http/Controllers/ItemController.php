@@ -8,7 +8,7 @@ use Illuminate\Http\Request;
 use App\Services\ItemService;
 use App\Http\Requests\ItemRequest\StoreItemData;
 use App\Http\Requests\ItemRequest\UpdateItemData;
-
+use App\Http\Resources\ItemResource;
 class ItemController extends Controller
 {
     /**
@@ -43,8 +43,8 @@ class ItemController extends Controller
         $result = $this->itemService->getAllItems($validatedData);
 
         // Return appropriate JSON response
-        return $result['status'] === 200
-            ? self::success($result['data'], $result['message'], $result['status'])
+         return $result['status'] === 200
+            ? self::success(ItemResource::collection(collect($result['data'])), $result['message'], $result['status'])
             : self::error(null, $result['message'], $result['status']);
     }
 /**

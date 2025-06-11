@@ -90,7 +90,7 @@ class Item extends Model
      */
     public function photos()
     {
-        return $this->morphMany(Photo::class, 'imageable');
+        return $this->morphMany(Photo::class, 'photoable');
     }
 
     /**

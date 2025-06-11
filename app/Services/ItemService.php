@@ -21,7 +21,7 @@ class ItemService
             $items = Item::query()
                 ->select('id', 'name', 'price')
                 ->with(['photos' => function ($query) {
-                    $query->select('id', 'url', 'imageable_id')
+                    $query->select('id', 'url', 'photoable_id')
                         ->orderBy('id')
                         ->limit(1);
                 }])
@@ -211,7 +211,7 @@ class ItemService
     public function getItemData($id)
     {
         try {
-            $item = Item::with(['user' . 'photos', 'user.photo', 'user.averageRateing'])->findOrFail($id);
+            $item = Item::with(['user' . 'photos', 'user.photo' ,'user.averageRateing'])->findOrFail($id);
 
             return [
                 'status' => 200,

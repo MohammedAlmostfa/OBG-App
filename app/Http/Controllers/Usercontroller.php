@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\UserRatingResource;
 use App\Models\User;
-use Illuminate\Http\Request;
 use App\Services\UserService;
+use App\Http\Resources\ItemResource;
+
 
 class UserController extends Controller
 {
@@ -37,9 +39,9 @@ class UserController extends Controller
         $result = $this->userService->getUserItems($id);
 
         // Return appropriate JSON response
-        return $result['status'] === 200
-            ? self::success($result['data'], $result['message'], $result['status'])
-            : self::error(null, $result['message'], $result['status']); 
+       return $result['status'] === 200
+            ? self::success(ItemResource::collection(collect($result['data'])), $result['message'], $result['status'])
+            : self::error(null, $result['message'], $result['status']);
     }
 
     /**
@@ -53,14 +55,15 @@ class UserController extends Controller
         // Fetch user ratings via service
         $result = $this->userService->getUserRating($id);
 
-        return $result['status'] === 200
-            ? self::success($result['data'], $result['message'], $result['status'])
+ 
+          return $result['status'] === 200
+            ? self::success(UserRatingResource::collection(collect($result['data'])), $result['message'], $result['status'])
             : self::error(null, $result['message'], $result['status']);
     }
      public function getUserData($id)
     {
         // Fetch user ratings via service
-        $result = $this->userService->getUserData($id);
+        $result = $this->userService->getUserRating($id);
 
         return $result['status'] === 200
             ? self::success($result['data'], $result['message'], $result['status'])

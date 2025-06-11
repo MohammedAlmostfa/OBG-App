@@ -109,10 +109,11 @@ class User extends Authenticatable implements JWTSubject
      *
      * @return \Illuminate\Database\Eloquent\Relations\MorphMany
      */
-    public function photo()
-    {
-        return $this->morphMany(Photo::class, 'photoable');
-    }
+ public function photo()
+{
+    return $this->morphMany(Photo::class, 'photoable');
+}
+
 
     /**
      * Calculate and return the average rating for the user.
