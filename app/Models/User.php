@@ -64,4 +64,16 @@ class User extends Authenticatable implements JWTSubject
     {
         return $this->hasOne(Profile::class, 'user_id');
     }
+public function rates()
+{
+    return $this->hasMany(Rate::class, 'user_id');
+}
+
+
+
+public function averageRate(): float
+{
+    return round($this->rates()->avg('rate') ?? 0, 2); 
+}
+
 }

@@ -8,6 +8,38 @@ use Exception;
 
 class ItemService
 {
+    public function getAllItems($filteringData)
+    {
+        try {
+            $items = Item::query()->select('id','name', 'price')
+                ->when(!empty($filteringData), function ($query) use ($filteringData) {
+                    foreach ($filteringData as $key => $value) {
+                        $query->where($key, $value);
+                    }
+                });
+
+            $items = $items->get();
+
+            return [
+                'status' => 200,
+                'message' => __('item.get_successful'),
+                'data' => $items
+            ];
+            Log::error('getAllItems: ' . json_encode($items->get()));
+        } catch (Exception $e) {
+            Log::error('Error in getAllItems: ' . $e->getMessage());
+
+            return [
+                'status' => 500,
+                'message' => [
+
+
+                    'errorDetails' => __('general.failed'),
+                ],
+            ];
+        }
+    }
+
     /**
      * Store a newly created item in the database.
      *
@@ -23,7 +55,7 @@ class ItemService
                 'subCategory_id' => $data["subCategory_id"],
                 'name'           => $data["name"],
                 'price'          => $data["price"],
-                // 'type'        => $data["type"], 
+                'type'        => $data["type"],
                 'description'    => $data["description"] ?? null,
                 'details'        => $data["details"] ?? null,
             ]);
@@ -61,7 +93,7 @@ class ItemService
                 'subCategory_id' => $data['subCategory_id'] ?? $item->subCategory_id,
                 'name'           => $data['name'] ?? $item->name,
                 'price'          => $data['price'] ?? $item->price,
-                // 'type'           => $data["type"]?? $item->type,
+                'type'           => $data["type"] ?? $item->type,
                 'description'    => $data['description'] ?? $item->description,
                 'details'        => $data['details'] ?? $item->details,
             ]);
@@ -134,6 +166,30 @@ class ItemService
                 'message' => [
                     'errorDetails' => __('general.failed'),
                 ],
+            ];
+        }
+    }
+
+    public function getItemData($id)
+    {
+        try {
+
+            $item = Item::with('user')->findOrFail($id);
+
+            // if ($item->user) {
+            //     $item->user->average_rate = $item->user->averageRate();
+            // }
+            return [
+                'status' => 200,
+                'message' => __('item.get_successful'),
+                'data' => $item
+            ];
+        } catch (Exception $e) {
+            Log::error('Error in getItemData: ' . $e->getMessage());
+
+            return [
+                'status' => 500,
+                'message' => __('general.failed'),
             ];
         }
     }

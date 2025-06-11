@@ -3,10 +3,11 @@
 namespace App\Http\Requests\ItemRequest;
 
 use Illuminate\Foundation\Http\FormRequest;
+
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Http\Exceptions\HttpResponseException;
 
-class StoreItemData extends FormRequest
+class FilteringData extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -21,19 +22,14 @@ class StoreItemData extends FormRequest
      *
      * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
      */
-    public function rules()
+    public function rules(): array
     {
         return [
-            'name' => 'required|string|max:255',
-            'price' => 'required|numeric|min:0',
-            'type' => 'required|in:fixed,negotiable,ثابت,قابل للتفاوض',
-            'category_id' => 'required|integer|exists:categories,id',
-            'subCategory_id' => 'required|integer|exists:sub_categories,id',
-            'description' => 'nullable|string',
-            'details' => 'nullable|string',
+                'category_id' => 'nullable|integer|exists:categories,id',
+            'subCategory_id' => 'nullable|integer|exists:sub_categories,id',
         ];
     }
-    /**
+     /**
      * Handle a failed validation attempt.
      * This method is called when validation fails.
      * Logs failed attempts and throws validation exception.

@@ -14,17 +14,20 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
+        User::factory()->create([
+            'name' => 'admin',
+            'email' => "mohammedalmostyfa336@gamil.com",
+            'password' => bcrypt('P@ssw0rd123')
+        ]);
         $this->call([
             CountrySeeder::class,
             ProvinceSeeder::class,
             CategorySeeder::class,
             SubCategorySeeder::class,
+           ItemSeeder::class,
 
         ]);
 
-        User::factory()->create([
-            'name' => 'Test User',
-            'email' => 'test@example.com',
-        ]);
+        
     }
 }

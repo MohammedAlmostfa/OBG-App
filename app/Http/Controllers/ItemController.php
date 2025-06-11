@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\ItemRequest\FilteringData;
 use App\Models\Item;
 use Illuminate\Http\Request;
 use App\Services\ItemService;
@@ -32,9 +33,13 @@ class ItemController extends Controller
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function index()
-    {
-        
+    public function index(FilteringData $request)
+    {      // Validate incoming request data
+        $validatedData = $request->validated();
+        $result = $this->itemService->getAllItems($validatedData);
+        return $result['status'] === 200
+            ? self::success($result['data'],  $result['message'], $result['status'])
+            : self::error(null, $result['message'], $result['status']);
     }
 
     /**
@@ -111,4 +116,16 @@ class ItemController extends Controller
             ? self::success(null, $result['message'], $result['status'])
             : self::error(null, $result['message'], $result['status']);
     }
+
+    public function show($id)
+{
+    $result = $this->itemService->getItemData($id);
+
+    return response()->json([
+        'status' => $result['status'] === 200 ? 'success' : 'error',
+        'message' => $result['message'],
+        'data' => $result['data'] ?? null, 
+    ], $result['status']);
+}
+
 }
