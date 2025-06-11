@@ -9,8 +9,9 @@ use App\Http\Controllers\Auth\ProfileController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\ItemController;
 use App\Http\Controllers\ProvinceController;
-use App\Http\Controllers\RateController;
+use App\Http\Controllers\RatingController;
 use App\Http\Controllers\SubCategoryController;
+use App\Http\Controllers\Usercontroller;
 
 // Public routes (no authentication required)
 
@@ -45,7 +46,14 @@ Route::get('subCategories/category/{id}', [SubCategoryController::class, 'index'
 Route::middleware('jwt')->group(function () {
 
     Route::apiResource('profile', ProfileController::class);
-    Route::apiResource('rates', RateController::class);
+
+    
+Route::get('items/user/{id}',[Usercontroller::class,'getUserItems']);
+        Route::get('ratings/user/{id}',[Usercontroller::class,'getUserRatings']);
+               Route::get('user/{id}',[Usercontroller::class,'getUserData']);
+        
+    Route::apiResource('ratings', RatingController::class);
+
     Route::get('/me', [ProfileController::class, 'getme']); // Retrieves details of the logged-in user
 
     Route::apiResource('items', ItemController::class);

@@ -89,15 +89,19 @@ class User extends Authenticatable implements JWTSubject
     {
         return $this->hasOne(Profile::class, 'user_id');
     }
+    public function items()
+    {
+        return $this->hasMany(Item::class, 'user_id');
+    }
 
     /**
      * One-to-many relationship: User has many rates.
      *
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
-    public function rates()
+    public function ratings()
     {
-        return $this->hasMany(Rate::class, 'user_id');
+        return $this->hasMany(Rating::class, 'user_id');
     }
 
     /**
@@ -107,7 +111,7 @@ class User extends Authenticatable implements JWTSubject
      */
     public function photo()
     {
-        return $this->morphMany(Photo::class, 'imageable');
+        return $this->morphMany(Photo::class, 'photoable');
     }
 
     /**
@@ -115,8 +119,27 @@ class User extends Authenticatable implements JWTSubject
      *
      * @return float
      */
-    public function averageRate(): float
+    public function averageRateing()
     {
-        return round($this->rates()->avg('rate') ?? 0, 2);
+        return round($this->rates()->avg('rating') ?? 0, 2);
+    }
+    /**
+     * Count the total number of ratings received.
+     *
+     * @return int
+     */
+    public function countRatings()
+    {
+        return $this->ratings()->count();
+    }
+
+    /**
+     * Count the total number of items owned by the user.
+     *
+     * @return int
+     */
+    public function countItems()
+    {
+        return $this->items()->count();
     }
 }

@@ -47,8 +47,7 @@ class ItemController extends Controller
             ? self::success($result['data'], $result['message'], $result['status'])
             : self::error(null, $result['message'], $result['status']);
     }
-
-    /**
+/**
      * Store a newly created item in storage.
      *
      * @param StoreItemData $request

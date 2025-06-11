@@ -18,19 +18,19 @@ class ItemService
     public function getAllItems($filteringData)
     {
         try {
-        $items = Item::query()
-    ->select('id', 'name', 'price')
-    ->with(['photos' => function ($query) {
-        $query->select('id', 'url', 'imageable_id') 
-              ->orderBy('id') 
-              ->limit(1);     
-    }])
-    ->when(!empty($filteringData), function ($query) use ($filteringData) {
-        foreach ($filteringData as $key => $value) {
-            $query->where($key, $value);
-        }
-    })
-    ->get();
+            $items = Item::query()
+                ->select('id', 'name', 'price')
+                ->with(['photos' => function ($query) {
+                    $query->select('id', 'url', 'imageable_id')
+                        ->orderBy('id')
+                        ->limit(1);
+                }])
+                ->when(!empty($filteringData), function ($query) use ($filteringData) {
+                    foreach ($filteringData as $key => $value) {
+                        $query->where($key, $value);
+                    }
+                })
+                ->get();
 
             return [
                 'status' => 200,
@@ -48,6 +48,7 @@ class ItemService
             ];
         }
     }
+
 
     /**
      * Store a newly created item in the database.
@@ -210,7 +211,7 @@ class ItemService
     public function getItemData($id)
     {
         try {
-            $item = Item::with(['user'.'photos', 'user.photo', 'user.averageRate'])->findOrFail($id);
+            $item = Item::with(['user' . 'photos', 'user.photo', 'user.averageRateing'])->findOrFail($id);
 
             return [
                 'status' => 200,
