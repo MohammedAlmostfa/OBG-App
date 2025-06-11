@@ -31,14 +31,20 @@ class ItemController extends Controller
     /**
      * Display a listing of the items.
      *
+     * @param FilteringData $request
      * @return \Illuminate\Http\JsonResponse
      */
     public function index(FilteringData $request)
-    {      // Validate incoming request data
+    {
+        // Validate incoming request data
         $validatedData = $request->validated();
+
+        // Fetch filtered items via service
         $result = $this->itemService->getAllItems($validatedData);
+
+        // Return appropriate JSON response
         return $result['status'] === 200
-            ? self::success($result['data'],  $result['message'], $result['status'])
+            ? self::success($result['data'], $result['message'], $result['status'])
             : self::error(null, $result['message'], $result['status']);
     }
 
@@ -53,10 +59,10 @@ class ItemController extends Controller
         // Validate incoming request data
         $validatedData = $request->validated();
 
-        // Call the service to handle storing logic
+        // Delegate creation to the service
         $result = $this->itemService->storeItem($validatedData);
 
-        // Return response based on result status
+        // Return appropriate JSON response
         return $result['status'] === 200
             ? self::success(null, $result['message'], $result['status'])
             : self::error(null, $result['message'], $result['status']);
@@ -66,35 +72,35 @@ class ItemController extends Controller
      * Update the specified item in storage.
      *
      * @param UpdateItemData $request
-     * @param Item $item
+     * @param int $id
      * @return \Illuminate\Http\JsonResponse
      */
-    public function update(UpdateItemData $request,  $id)
+    public function update(UpdateItemData $request, $id)
     {
         // Validate incoming request data
         $validatedData = $request->validated();
 
-        // Call the service to handle update logic
+        // Delegate update to the service
         $result = $this->itemService->updateItem($id, $validatedData);
 
-        // Return response based on result status
+        // Return appropriate JSON response
         return $result['status'] === 200
             ? self::success(null, $result['message'], $result['status'])
             : self::error(null, $result['message'], $result['status']);
     }
 
     /**
-     * Soft delete the specified item.
+     * Soft delete the specified item (move to trash).
      *
      * @param Item $item
      * @return \Illuminate\Http\JsonResponse
      */
     public function destroy(Item $item)
     {
-        // Call the service to handle soft deletion
+        // Delegate soft deletion to the service
         $result = $this->itemService->softDeleteItem($item);
 
-        // Return response based on result status
+        // Return appropriate JSON response
         return $result['status'] === 200
             ? self::success(null, $result['message'], $result['status'])
             : self::error(null, $result['message'], $result['status']);
@@ -108,24 +114,31 @@ class ItemController extends Controller
      */
     public function forceDestroy(Item $item)
     {
-        // Call the service to handle permanent deletion
-        $result = $this->itemService->forceDeleteItem($item);
+        // Call service to permanently delete the item
+        $result = $this->itemService->forceDeleteItem($item->id);
 
-        // Return response based on result status
+        // Return appropriate JSON response
         return $result['status'] === 200
             ? self::success(null, $result['message'], $result['status'])
             : self::error(null, $result['message'], $result['status']);
     }
 
+    /**
+     * Display the specified item details.
+     *
+     * @param int $id
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function show($id)
-{
-    $result = $this->itemService->getItemData($id);
+    {
+        // Fetch single item details
+        $result = $this->itemService->getItemData($id);
 
-    return response()->json([
-        'status' => $result['status'] === 200 ? 'success' : 'error',
-        'message' => $result['message'],
-        'data' => $result['data'] ?? null, 
-    ], $result['status']);
-}
-
+        // Return structured JSON response
+        return response()->json([
+            'status' => $result['status'] === 200 ? 'success' : 'error',
+            'message' => $result['message'],
+            'data' => $result['data'] ?? null,
+        ], $result['status']);
+    }
 }

@@ -7,44 +7,71 @@ use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 
+/**
+ * Class User
+ *
+ * Represents an authenticated user of the application.
+ *
+ * @property int $id
+ * @property string $name
+ * @property string $email
+ * @property string $password
+ * @property \Illuminate\Support\Carbon|null $email_verified_at
+ */
 class User extends Authenticatable implements JWTSubject
 {
-    // Using necessary traits for the User model like HasFactory, Notifiable, HasRoles
     use HasFactory, Notifiable;
-    // Guard name for JWT Authentication
+
+    /**
+     * Guard name for JWT Authentication (typically 'api').
+     *
+     * @var string
+     */
     protected $guard_name = 'api';
 
-    // Mass assignable attributes for the User model
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var array
+     */
     protected $fillable = [
         'name',
         'email',
         'password',
     ];
 
-    // Attributes hidden from array and JSON output for security purposes
+    /**
+     * The attributes that should be hidden for arrays and JSON output.
+     *
+     * @var array
+     */
     protected $hidden = [
         'password',
         'remember_token',
     ];
 
-    // Type casting attributes (e.g., casting email_verified_at to a DateTime object)
+    /**
+     * The attributes that should be cast to specific data types.
+     *
+     * @var array
+     */
     protected $casts = [
         'email_verified_at' => 'datetime',
-        'password' => 'hashed', // Ensuring password is hashed
+        'password' => 'hashed', // Automatically hash password when setting it
     ];
 
     /**
-     * Get the JWT Identifier (used for authentication).
+     * Get the identifier to be stored in the JWT token.
      *
      * @return mixed
      */
     public function getJWTIdentifier()
     {
-        return $this->getKey(); // Returning the primary key (ID)
+        return $this->getKey(); // Typically the primary key (ID)
     }
 
     /**
-     * Get the custom claims for the JWT (empty in this case).
+     * Return a key-value array, containing any custom claims to be added to JWT.
      *
      * @return array
      */
@@ -54,9 +81,7 @@ class User extends Authenticatable implements JWTSubject
     }
 
     /**
-     * Define a One-to-One relationship with the Profile model.
-     *
-     * This means each user has one profile.
+     * One-to-one relationship: User has one Profile.
      *
      * @return \Illuminate\Database\Eloquent\Relations\HasOne
      */
@@ -64,16 +89,34 @@ class User extends Authenticatable implements JWTSubject
     {
         return $this->hasOne(Profile::class, 'user_id');
     }
-public function rates()
-{
-    return $this->hasMany(Rate::class, 'user_id');
-}
 
+    /**
+     * One-to-many relationship: User has many rates.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function rates()
+    {
+        return $this->hasMany(Rate::class, 'user_id');
+    }
 
+    /**
+     * Polymorphic one-to-many relationship for user photos.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\MorphMany
+     */
+    public function photo()
+    {
+        return $this->morphMany(Photo::class, 'imageable');
+    }
 
-public function averageRate(): float
-{
-    return round($this->rates()->avg('rate') ?? 0, 2); 
-}
-
+    /**
+     * Calculate and return the average rating for the user.
+     *
+     * @return float
+     */
+    public function averageRate(): float
+    {
+        return round($this->rates()->avg('rate') ?? 0, 2);
+    }
 }

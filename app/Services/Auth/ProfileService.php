@@ -7,6 +7,7 @@ use App\Models\Profile;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Str;
 
 class ProfileService
 {
@@ -28,6 +29,13 @@ class ProfileService
                     'province_id' => $data['province_id'],
                     'country_id' => $data['country_id'],
                 ]);
+                if (isset($data['photo']) && $data['photo']) {
+                    $image = $data['photo'];
+                    $imageName = Str::random(32) . '.' . $image->getClientOriginalExtension();
+                    $path = $image->storeAs('users/photos', $imageName, 'public');
+                    $user->photo()->create(['url' => $path]);
+                }
+
 
                 return [
                     'message' => __('profile.profile_created_successfully'),
@@ -74,7 +82,15 @@ class ProfileService
                     'country_id' => $data['country_id'] ?? $profile->country_id,
                 ]);
 
-                Cache::forget('userdata_' . $user->id);
+                if (isset($data['photo']) && $data['photo']) {
+                    $user->photo()->delete(); // Corrected
+                    $image = $data['photo'];
+                    $imageName = Str::random(32) . '.' . $image->getClientOriginalExtension();
+                    $path = $image->storeAs('users/photos', $imageName, 'public');
+                    $user->photo()->create(['url' => $path]);
+                }
+
+
 
                 return [
                     'message' => __('profile.profile_updated_successfully'),

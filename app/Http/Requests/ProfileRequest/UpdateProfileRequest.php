@@ -2,8 +2,9 @@
 
 namespace App\Http\Requests\ProfileRequest;
 
-use Illuminate\Foundation\Http\FormRequest;
+use App\Rules\CheckPhoto;
 use Illuminate\Contracts\Validation\Validator;
+use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
 
 class UpdateProfileRequest extends FormRequest
@@ -31,7 +32,8 @@ class UpdateProfileRequest extends FormRequest
             'phone' => 'nullable|regex:/\+963\d{9}/',
             'address' => 'nullable|regex:/(^[-0-9A-Za-z.,\/ ]+$)/',
             'country_id' => 'nullable|exists:countries,id',
-            'province_id' => 'nullable|exists:provinces,id'
+            'province_id' => 'nullable|exists:provinces,id',
+            'photo' => ['required', 'image', new CheckPhoto]
         ];
     }
 

@@ -2,8 +2,9 @@
 
 namespace App\Http\Requests\ItemRequest;
 
-use Illuminate\Foundation\Http\FormRequest;
+use App\Rules\CheckPhoto;
 use Illuminate\Contracts\Validation\Validator;
+use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
 
 class StoreItemData extends FormRequest
@@ -31,8 +32,11 @@ class StoreItemData extends FormRequest
             'subCategory_id' => 'required|integer|exists:sub_categories,id',
             'description' => 'nullable|string',
             'details' => 'nullable|string',
+            'photos' => ['required', 'array'],
+            'photos.*' => ['required', 'image', new CheckPhoto]
         ];
     }
+
     /**
      * Handle a failed validation attempt.
      * This method is called when validation fails.

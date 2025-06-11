@@ -3,37 +3,46 @@
 namespace App\Services;
 
 use App\Models\Item;
-use Illuminate\Support\Facades\Log;
 use Exception;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Str;
 
 class ItemService
 {
+    /**
+     * Get all items with optional filtering.
+     *
+     * @param array $filteringData
+     * @return array
+     */
     public function getAllItems($filteringData)
     {
         try {
-            $items = Item::query()->select('id','name', 'price')
-                ->when(!empty($filteringData), function ($query) use ($filteringData) {
-                    foreach ($filteringData as $key => $value) {
-                        $query->where($key, $value);
-                    }
-                });
-
-            $items = $items->get();
+        $items = Item::query()
+    ->select('id', 'name', 'price')
+    ->with(['photos' => function ($query) {
+        $query->select('id', 'url', 'imageable_id') 
+              ->orderBy('id') 
+              ->limit(1);     
+    }])
+    ->when(!empty($filteringData), function ($query) use ($filteringData) {
+        foreach ($filteringData as $key => $value) {
+            $query->where($key, $value);
+        }
+    })
+    ->get();
 
             return [
                 'status' => 200,
                 'message' => __('item.get_successful'),
                 'data' => $items
             ];
-            Log::error('getAllItems: ' . json_encode($items->get()));
         } catch (Exception $e) {
             Log::error('Error in getAllItems: ' . $e->getMessage());
 
             return [
                 'status' => 500,
                 'message' => [
-
-
                     'errorDetails' => __('general.failed'),
                 ],
             ];
@@ -49,16 +58,26 @@ class ItemService
     public function storeItem($data)
     {
         try {
+            $user = auth()->user();
+
             $item = Item::create([
-                'user_id'        => auth()->user()->id,
+                'user_id'        => $user->id,
                 'category_id'    => $data["category_id"],
                 'subCategory_id' => $data["subCategory_id"],
                 'name'           => $data["name"],
                 'price'          => $data["price"],
-                'type'        => $data["type"],
+                'type'           => $data["type"],
                 'description'    => $data["description"] ?? null,
                 'details'        => $data["details"] ?? null,
             ]);
+
+            if (!empty($data['photos']) && is_array($data['photos'])) {
+                foreach ($data['photos'] as $photo) {
+                    $imageName = Str::random(32) . '.' . $photo->getClientOriginalExtension();
+                    $path = $photo->storeAs('items/photos', $imageName, 'public');
+                    $item->photos()->create(['url' => $path]);
+                }
+            }
 
             return [
                 'status' => 200,
@@ -79,7 +98,7 @@ class ItemService
     /**
      * Update the given item with provided data.
      *
-     * @param Item $item
+     * @param int $id
      * @param array $data
      * @return array
      */
@@ -97,7 +116,19 @@ class ItemService
                 'description'    => $data['description'] ?? $item->description,
                 'details'        => $data['details'] ?? $item->details,
             ]);
-            Log::error('updateItem $data content:', $data);
+
+            if (!empty($data['photos']) && is_array($data['photos'])) {
+                $item->photos()->delete();
+
+                foreach ($data['photos'] as $photo) {
+                    if ($photo instanceof \Illuminate\Http\UploadedFile) {
+                        $imageName = Str::random(32) . '.' . $photo->getClientOriginalExtension();
+                        $path = $photo->storeAs('items/photos', $imageName, 'public');
+                        $item->photos()->create(['url' => $path]);
+                    }
+                }
+            }
+
             return [
                 'status' => 200,
                 'message' => __('item.update_successful'),
@@ -116,7 +147,7 @@ class ItemService
     }
 
     /**
-     * Soft delete the given item (moves it to trash).
+     * Soft delete the given item.
      *
      * @param Item $item
      * @return array
@@ -170,15 +201,17 @@ class ItemService
         }
     }
 
+    /**
+     * Get a single item with related user and media data.
+     *
+     * @param int $id
+     * @return array
+     */
     public function getItemData($id)
     {
         try {
+            $item = Item::with(['user'.'photos', 'user.photo', 'user.averageRate'])->findOrFail($id);
 
-            $item = Item::with('user')->findOrFail($id);
-
-            // if ($item->user) {
-            //     $item->user->average_rate = $item->user->averageRate();
-            // }
             return [
                 'status' => 200,
                 'message' => __('item.get_successful'),

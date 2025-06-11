@@ -2,8 +2,9 @@
 
 namespace App\Http\Requests\ProfileRequest;
 
-use Illuminate\Foundation\Http\FormRequest;
+use App\Rules\CheckPhoto;
 use Illuminate\Contracts\Validation\Validator;
+use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
 
 class StoreProfileRequest extends FormRequest
@@ -30,7 +31,8 @@ class StoreProfileRequest extends FormRequest
             'phone' => 'required',
             'address' => 'required',
             'country_id' => 'required|exists:countries,id',
-            'province_id' => 'required|exists:provinces,id'
+            'province_id' => 'required|exists:provinces,id',
+            'photo' => ['required', 'image', new CheckPhoto]
         ];
     }
 
