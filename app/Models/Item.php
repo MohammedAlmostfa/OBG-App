@@ -129,4 +129,8 @@ class Item extends Model
             set: fn($value) => collect(self::TYPE_MAP)->search(fn($type) => in_array($value, $type, true)) ?? 0
         );
     }
+    public function savedByUsers()
+    {
+        return $this->belongsToMany(User::class, 'item_user', 'item_id', 'user_id');
+    }
 }

@@ -10,6 +10,7 @@ use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\ItemController;
 use App\Http\Controllers\ProvinceController;
 use App\Http\Controllers\RatingController;
+use App\Http\Controllers\SavedItemController;
 use App\Http\Controllers\SubCategoryController;
 use App\Http\Controllers\Usercontroller;
 
@@ -47,14 +48,15 @@ Route::middleware('jwt')->group(function () {
 
     Route::apiResource('profile', ProfileController::class);
 
-    
-Route::get('items/user/{id}',[Usercontroller::class,'getUserItems']);
-        Route::get('ratings/user/{id}',[Usercontroller::class,'getUserRatings']);
-               Route::get('user/{id}',[Usercontroller::class,'getUserData']);
-        
+
+    Route::get('items/user/{id}', [Usercontroller::class, 'getUserItems']);
+    Route::get('ratings/user/{id}', [Usercontroller::class, 'getUserRatings']);
+    Route::get('user/{id}', [Usercontroller::class, 'getUserData']);
+    Route::get('savedItems', [Usercontroller::class, 'getSavedItems']);
     Route::apiResource('ratings', RatingController::class);
 
     Route::get('/me', [ProfileController::class, 'getme']); // Retrieves details of the logged-in user
-
+    Route::post('items/{id}/save', [SavedItemController::class, 'save']);
+    Route::delete('items/{id}/unsave', [SavedItemController::class, 'unSave']);
     Route::apiResource('items', ItemController::class);
 });

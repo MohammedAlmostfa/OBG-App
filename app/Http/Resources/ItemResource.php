@@ -18,6 +18,7 @@ class ItemResource extends JsonResource
             'id'         => $this->id,
             'name'       => $this->name,
             'price'     => $this->price,
+       'is_saved'  =>  ($this->is_saved ?? 1),
             'photo_url' => optional($this->photos->first())->url,
 
         ];

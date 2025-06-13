@@ -41,7 +41,9 @@ class UserService
 
             return [
                 'status'  => 500,
-                'message' => __('general.failed'),
+                'message' => [
+                    'errorDetails' => __('general.failed'),
+                ],
             ];
         }
     }
@@ -77,7 +79,9 @@ class UserService
 
             return [
                 'status'  => 500,
-                'message' => __('general.failed'),
+                'message' => [
+                    'errorDetails' => __('general.failed'),
+                ],
             ];
         }
     }
@@ -98,8 +102,38 @@ class UserService
 
             return [
                 'status'  => 500,
-                'message' => __('general.failed'),
+                'message' => [
+                    'errorDetails' => __('general.failed'),
+                ],
             ];
         }
     }
+
+    public function getSavedItems()
+{
+    try {
+        $user = auth()->user(); 
+
+
+        $items = $user->savedItems()->with(['photos' => function ($query) {
+            $query->select('id', 'url', 'photoable_id')->limit(1);
+        }])->get();
+
+        return [
+            'status'  => 200,
+            'message' => __('item.get_successful'),
+            'data'    => $items,
+        ];
+    } catch (Exception $e) {
+        Log::error('Error in showSavedItems: ' . $e->getMessage());
+
+        return [
+            'status' => 500,
+            'message' => [
+                'errorDetails' => __('general.failed'),
+            ],
+        ];
+    }
+}
+
 }

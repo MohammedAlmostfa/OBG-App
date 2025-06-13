@@ -30,7 +30,7 @@ class SubCategoryService
             return [
                 'status' => 500,
                 'message' => [
-                    'errorDetails' => ['An error occurred while retrieving subcategories.'],
+                    'errorDetails' => __('general.failed'),
                 ],
             ];
         }

@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 namespace App\Services;
 
@@ -13,7 +13,7 @@ use Exception;
  */
 class RatingService
 {
-   
+
 
     /**
      * Store a new rating in the database.
@@ -42,7 +42,9 @@ class RatingService
 
             return [
                 'status'  => 500,
-                'message' => __('general.failed'),
+                'message' => [
+                    'errorDetails' => [__('auth.login_failed')],
+                ],
             ];
         }
     }
@@ -73,7 +75,9 @@ class RatingService
 
             return [
                 'status'  => 500,
-                'message' => __('general.failed'),
+                'message' => [
+                    'errorDetails' => [__('auth.login_failed')],
+                ],
             ];
         }
     }
@@ -100,7 +104,9 @@ class RatingService
 
             return [
                 'status'  => 500,
-                'message' => __('general.failed'),
+                'message' => [
+                    'errorDetails' => [__('auth.login_failed')],
+                ],
             ];
         }
     }

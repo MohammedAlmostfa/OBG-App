@@ -109,10 +109,10 @@ class User extends Authenticatable implements JWTSubject
      *
      * @return \Illuminate\Database\Eloquent\Relations\MorphMany
      */
- public function photo()
-{
-    return $this->morphMany(Photo::class, 'photoable');
-}
+    public function photo()
+    {
+        return $this->morphMany(Photo::class, 'photoable');
+    }
 
 
     /**
@@ -122,7 +122,7 @@ class User extends Authenticatable implements JWTSubject
      */
     public function averageRateing()
     {
-        return round($this->rates()->avg('rating') ?? 0, 2);
+        return round($this->rates()->avg('rate') ?? 0, 2);
     }
     /**
      * Count the total number of ratings received.
@@ -143,4 +143,9 @@ class User extends Authenticatable implements JWTSubject
     {
         return $this->items()->count();
     }
+  public function savedItems()
+{
+    return $this->belongsToMany(Item::class, 'item_user', 'user_id', 'item_id');
+}
+
 }

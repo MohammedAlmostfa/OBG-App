@@ -4,6 +4,8 @@ namespace App\Services;
 
 use App\Models\Item;
 use Exception;
+
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 
@@ -25,9 +27,19 @@ class ItemService
                         ->orderBy('id')
                         ->limit(1);
                 }])
+                ->addSelect([
+                    DB::raw('CASE WHEN EXISTS (
+            SELECT 1 FROM item_user 
+            WHERE item_user.item_id = items.id 
+              AND item_user.user_id = ' . (int)auth()->id() . '
+        ) THEN 1 ELSE 0 END AS is_saved')
+                ])
                 ->when(!empty($filteringData), function ($query) use ($filteringData) {
+                    $allowed = ['category_id', 'type'];
                     foreach ($filteringData as $key => $value) {
-                        $query->where($key, $value);
+                        if (in_array($key, $allowed)) {
+                            $query->where($key, $value);
+                        }
                     }
                 })
                 ->get();
@@ -211,7 +223,7 @@ class ItemService
     public function getItemData($id)
     {
         try {
-            $item = Item::with(['user' . 'photos', 'user.photo' ,'user.averageRateing'])->findOrFail($id);
+            $item = Item::with(['user' . 'photos', 'user.photo', 'user.averageRateing'])->findOrFail($id);
 
             return [
                 'status' => 200,
@@ -223,7 +235,9 @@ class ItemService
 
             return [
                 'status' => 500,
-                'message' => __('general.failed'),
+                'message' => [
+                    'errorDetails' => [__('auth.login_failed')],
+                ],
             ];
         }
     }

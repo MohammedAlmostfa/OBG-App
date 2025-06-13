@@ -69,4 +69,16 @@ class UserController extends Controller
             ? self::success($result['data'], $result['message'], $result['status'])
             : self::error(null, $result['message'], $result['status']);
     }
+
+   public function getSavedItems()
+    {
+ 
+        $result = $this->userService->getSavedItems();
+
+        // Return appropriate JSON response
+       return $result['status'] === 200
+            ?  self::success(ItemResource::collection(collect($result['data'])), $result['message'], $result['status'])
+            : self::error(null, $result['message'], $result['status']);
+    }
+
 }
