@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Policies\FavouritrUserPolicy;
 use App\Policies\SavedItemPolicy;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\Gate;
@@ -21,5 +22,6 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
      Gate::define('unSave', [SavedItemPolicy::class, 'unSave']);
+     Gate::define('remove', [FavouritrUserPolicy::class, 'remove']);
     }
 }

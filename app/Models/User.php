@@ -12,11 +12,11 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
  *
  * Represents an authenticated user of the application.
  *
- * @property int $id
- * @property string $name
- * @property string $email
- * @property string $password
- * @property \Illuminate\Support\Carbon|null $email_verified_at
+ * @property int $id Unique identifier for the user.
+ * @property string $name Full name of the user.
+ * @property string $email Email address of the user.
+ * @property string $password Hashed password for authentication.
+ * @property \Illuminate\Support\Carbon|null $email_verified_at Timestamp of email verification.
  */
 class User extends Authenticatable implements JWTSubject
 {
@@ -31,6 +31,8 @@ class User extends Authenticatable implements JWTSubject
 
     /**
      * The attributes that are mass assignable.
+     * 
+     * Allows mass assignment of specific fields when creating or updating a user.
      *
      * @var array
      */
@@ -41,7 +43,7 @@ class User extends Authenticatable implements JWTSubject
     ];
 
     /**
-     * The attributes that should be hidden for arrays and JSON output.
+     * The attributes that should be hidden in JSON responses.
      *
      * @var array
      */
@@ -57,7 +59,7 @@ class User extends Authenticatable implements JWTSubject
      */
     protected $casts = [
         'email_verified_at' => 'datetime',
-        'password' => 'hashed', // Automatically hash password when setting it
+        'password' => 'hashed', // Automatically hashes password upon setting
     ];
 
     /**
@@ -71,7 +73,7 @@ class User extends Authenticatable implements JWTSubject
     }
 
     /**
-     * Return a key-value array, containing any custom claims to be added to JWT.
+     * Return a key-value array containing any custom claims to be added to JWT.
      *
      * @return array
      */
@@ -89,13 +91,19 @@ class User extends Authenticatable implements JWTSubject
     {
         return $this->hasOne(Profile::class, 'user_id');
     }
+
+    /**
+     * One-to-many relationship: User has many Items.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
     public function items()
     {
         return $this->hasMany(Item::class, 'user_id');
     }
 
     /**
-     * One-to-many relationship: User has many rates.
+     * One-to-many relationship: User has many Ratings.
      *
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
@@ -106,6 +114,8 @@ class User extends Authenticatable implements JWTSubject
 
     /**
      * Polymorphic one-to-many relationship for user photos.
+     * 
+     * This allows a User to have multiple photos while enabling other models to use the same relationship.
      *
      * @return \Illuminate\Database\Eloquent\Relations\MorphMany
      */
@@ -114,16 +124,16 @@ class User extends Authenticatable implements JWTSubject
         return $this->morphMany(Photo::class, 'photoable');
     }
 
-
     /**
      * Calculate and return the average rating for the user.
      *
      * @return float
      */
-    public function averageRateing()
+    public function averageRating()
     {
-        return round($this->rates()->avg('rate') ?? 0, 2);
+        return round($this->ratings()->avg('rate') ?? 0, 2);
     }
+
     /**
      * Count the total number of ratings received.
      *
@@ -143,9 +153,28 @@ class User extends Authenticatable implements JWTSubject
     {
         return $this->items()->count();
     }
-  public function savedItems()
-{
-    return $this->belongsToMany(Item::class, 'item_user', 'user_id', 'item_id');
-}
 
+    /**
+     * Many-to-Many relationship: User saved multiple items.
+     * 
+     * This allows the user to save items using a pivot table "item_user".
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     */
+    public function savedItems()
+    {
+        return $this->belongsToMany(Item::class, 'item_user', 'user_id', 'item_id');
+    }
+
+    /**
+     * Many-to-Many relationship: User has favorite users.
+     * 
+     * This allows users to favorite each other using a pivot table "users_users".
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     */
+    public function favoriteUsers()
+    {
+        return $this->belongsToMany(User::class, 'users_users', 'user_id', 'favorite_user_id');
+    }
 }

@@ -6,12 +6,18 @@ use App\Http\Resources\UserRatingResource;
 use App\Models\User;
 use App\Services\UserService;
 use App\Http\Resources\ItemResource;
+use App\Http\Resources\UserResource;
+use Illuminate\Http\JsonResponse;
 
-
+/**
+ * Class UserController
+ *
+ * Handles user-related operations such as retrieving items, ratings, saved items, and favorite users.
+ */
 class UserController extends Controller
 {
     /**
-     * UserService instance to handle business logic.
+     * Instance of UserService to handle business logic.
      *
      * @var UserService
      */
@@ -33,13 +39,13 @@ class UserController extends Controller
      * @param int $id The ID of the user whose items are being fetched.
      * @return JsonResponse Response with retrieved item data.
      */
-    public function getUserItems($id)
+    public function getUserItems($id): JsonResponse
     {
-        // Fetch filtered items via service
+        // Fetch filtered items via service layer
         $result = $this->userService->getUserItems($id);
 
         // Return appropriate JSON response
-       return $result['status'] === 200
+        return $result['status'] === 200
             ? self::success(ItemResource::collection(collect($result['data'])), $result['message'], $result['status'])
             : self::error(null, $result['message'], $result['status']);
     }
@@ -50,35 +56,63 @@ class UserController extends Controller
      * @param int $id The ID of the user whose ratings are being fetched.
      * @return JsonResponse Response with retrieved rating data.
      */
-    public function getUserRatings($id)
+    public function getUserRatings($id): JsonResponse
     {
         // Fetch user ratings via service
         $result = $this->userService->getUserRating($id);
 
- 
-          return $result['status'] === 200
+        // Return appropriate JSON response
+        return $result['status'] === 200
             ? self::success(UserRatingResource::collection(collect($result['data'])), $result['message'], $result['status'])
             : self::error(null, $result['message'], $result['status']);
     }
-     public function getUserData($id)
-    {
-        // Fetch user ratings via service
-        $result = $this->userService->getUserRating($id);
 
+    /**
+     * Retrieve detailed user data.
+     *
+     * @param int $id The ID of the user whose data is being fetched.
+     * @return JsonResponse Response with user data.
+     */
+    public function getUserData($id): JsonResponse
+    {
+        // Fetch user data via service layer
+        $result = $this->userService->getUserData($id);
+
+        // Return appropriate JSON response
         return $result['status'] === 200
             ? self::success($result['data'], $result['message'], $result['status'])
             : self::error(null, $result['message'], $result['status']);
     }
 
-   public function getSavedItems()
+    /**
+     * Retrieve saved items of the authenticated user.
+     *
+     * @return JsonResponse Response with saved items data.
+     */
+    public function getSavedItems(): JsonResponse
     {
- 
+        // Fetch saved items via service layer
         $result = $this->userService->getSavedItems();
 
         // Return appropriate JSON response
-       return $result['status'] === 200
-            ?  self::success(ItemResource::collection(collect($result['data'])), $result['message'], $result['status'])
+        return $result['status'] === 200
+            ? self::success(ItemResource::collection(collect($result['data'])), $result['message'], $result['status'])
             : self::error(null, $result['message'], $result['status']);
     }
 
+    /**
+     * Retrieve favorite users of the authenticated user.
+     *
+     * @return JsonResponse Response with favorite users data.
+     */
+    public function getFavouriteUsers(): JsonResponse
+    {
+        // Fetch favorite users via service layer
+        $result = $this->userService->getFavouriteUsers();
+
+        // Return appropriate JSON response
+        return $result['status'] === 200
+            ? self::success(UserResource::collection(collect($result['data'])), $result['message'], $result['status'])
+            : self::error(null, $result['message'], $result['status']);
+    }
 }
