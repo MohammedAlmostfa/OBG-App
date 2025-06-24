@@ -25,8 +25,11 @@ class Profile extends Model
         'birthday',
         'phone',
         'address',
-        'country_id',
-        'province_id',
+        // 'country_id',
+        // 'province_id',
+        'longitude',
+        'latitude',
+
     ];
 
     /**
@@ -78,23 +81,23 @@ class Profile extends Model
         return $this->belongsTo(User::class);
     }
 
-    /**
-     * Get the country associated with this profile.
-     *
-     * @return BelongsTo
-     */
-    public function country(): BelongsTo
-    {
-        return $this->belongsTo(Country::class);
-    }
+    // /**
+    //  * Get the country associated with this profile.
+    //  *
+    //  * @return BelongsTo
+    //  */
+    // public function country(): BelongsTo
+    // {
+    //     return $this->belongsTo(Country::class);
+    // }
 
-    /**
-     * Get the province associated with this profile.
-     *
-     * @return BelongsTo
-     */
-    public function province(): BelongsTo
-    {
-        return $this->belongsTo(Province::class);
-    }
+//     /**
+//      * Get the province associated with this profile.
+//      *
+//      * @return BelongsTo
+//      */
+//     public function province(): BelongsTo
+//     {
+//         return $this->belongsTo(Province::class);
+//     } 
 }

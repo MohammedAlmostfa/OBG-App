@@ -36,10 +36,12 @@ class CheckUserPasswordRequest extends FormRequest
                 'required',
                 'min:8',
                 'string',
+                       'confirmed',
                 'regex:/[a-z]/',
                 'regex:/[A-Z]/',
                 'regex:/[0-9]/',
                 'regex:/[@$!%*#?&]/',
+
             ],
         ];
     }

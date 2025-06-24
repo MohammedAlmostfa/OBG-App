@@ -26,8 +26,11 @@ class ProfileService
                     'phone' => $data['phone'],
                     'address' => $data['address'],
                     'user_id' => $user->id,
-                    'province_id' => $data['province_id'],
-                    'country_id' => $data['country_id'],
+                    // 'province_id' => $data['province_id'],
+                    // 'country_id' => $data['country_id'],
+                    'longitude' => $data['longitude'] ?? null,
+                    'latitude' => $data['latitude'] ?? null,
+
                 ]);
                 if (isset($data['photo']) && $data['photo']) {
                     $image = $data['photo'];
@@ -78,8 +81,10 @@ class ProfileService
                     'birthday' => $data['birthday'] ?? $profile->birthday,
                     'phone' => $data['phone'] ?? $profile->phone,
                     'address' => $data['address'] ?? $profile->address,
-                    'province_id' => $data['province_id'] ?? $profile->province_id,
-                    'country_id' => $data['country_id'] ?? $profile->country_id,
+                    // 'province_id' => $data['province_id'] ?? $profile->province_id,
+                    // 'country_id' => $data['country_id'] ?? $profile->country_id,
+                    'longitude' => $data['longitude'] ?? $profile->longitude,
+                    'latitude' => $data['latitude'] ?? $profile->latitude,
                 ]);
 
                 if (isset($data['photo']) && $data['photo']) {
@@ -130,8 +135,10 @@ class ProfileService
                 'birthday' => $user->profile->birthday,
                 'phone' => $user->profile->phone,
                 'address' => $user->profile->address,
-                'country_name' => json_decode($user->profile->country->name, true) ?? null,
-                'province_name' => json_decode($user->profile->province->name, true) ?? null,
+                'longitude' => $user->profile->longitude,
+                'latitude' => $user->profile->latitude,
+                // 'country_name' => json_decode($user->profile->country->name, true) ?? null,
+                // 'province_name' => json_decode($user->profile->province->name, true) ?? null,
             ];
 
             return [

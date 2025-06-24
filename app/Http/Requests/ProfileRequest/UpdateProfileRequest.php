@@ -33,6 +33,8 @@ class UpdateProfileRequest extends FormRequest
             'address' => 'nullable|regex:/(^[-0-9A-Za-z.,\/ ]+$)/',
             'country_id' => 'nullable|exists:countries,id',
             'province_id' => 'nullable|exists:provinces,id',
+                        'longitude' => 'nullable|decimal:10,8',
+            'latitude' => 'nullable|decimal:10,8',
             'photo' => ['required', 'image', new CheckPhoto]
         ];
     }

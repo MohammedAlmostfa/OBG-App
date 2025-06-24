@@ -18,12 +18,12 @@ return new class extends Migration {
             $table->string('phone')->nullable();
             $table->string('address')->nullable();
             $table->foreignId('user_id')->constrained('users')->cascadeOnDelete();
-            $table->foreignId('country_id')->constrained('countries')->cascadeOnDelete();
-            $table->foreignId('province_id')->constrained('provinces')->cascadeOnDelete();
+            // $table->foreignId('country_id')->constrained('countries')->cascadeOnDelete();
+            // $table->foreignId('province_id')->constrained('provinces')->cascadeOnDelete();
+            $table->decimal('latitude', 10, 8)->nullable();
+            $table->decimal('longitude', 11, 8)->nullable();
             $table->timestamps();
             $table->index('user_id');
-
-
         });
     }
     /**
