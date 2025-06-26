@@ -6,7 +6,6 @@ use Exception;
 use App\Models\Profile;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Str;
 
 class ProfileService
@@ -24,7 +23,7 @@ class ProfileService
                     'gender' => $data['gender'] ?? null,
                     'birthday' => $data['birthday'] ?? null,
                     'phone' => $data['phone'],
-                    'address' => $data['address'],
+                    // 'address' => $data['address'],
                     'user_id' => $user->id,
                     // 'province_id' => $data['province_id'],
                     // 'country_id' => $data['country_id'],
@@ -80,7 +79,7 @@ class ProfileService
                     'gender' => $data['gender'] ?? $profile->gender,
                     'birthday' => $data['birthday'] ?? $profile->birthday,
                     'phone' => $data['phone'] ?? $profile->phone,
-                    'address' => $data['address'] ?? $profile->address,
+                    // 'address' => $data['address'] ?? $profile->address,
                     // 'province_id' => $data['province_id'] ?? $profile->province_id,
                     // 'country_id' => $data['country_id'] ?? $profile->country_id,
                     'longitude' => $data['longitude'] ?? $profile->longitude,
@@ -125,7 +124,7 @@ class ProfileService
     {
         try {
             $user = Auth::user();
-            $user->load(['profile.country', 'profile.province']);
+            $user->load('profile');
 
             $userData = [
                 'id' => $user->id,
@@ -134,7 +133,7 @@ class ProfileService
                 'gender' => $user->profile->gender,
                 'birthday' => $user->profile->birthday,
                 'phone' => $user->profile->phone,
-                'address' => $user->profile->address,
+                // 'address' => $user->profile->address,
                 'longitude' => $user->profile->longitude,
                 'latitude' => $user->profile->latitude,
                 // 'country_name' => json_decode($user->profile->country->name, true) ?? null,

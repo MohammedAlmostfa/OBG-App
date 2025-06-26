@@ -29,11 +29,11 @@ class StoreProfileRequest extends FormRequest
             'gender' => 'nullable',
             'birthday' => 'nullable|date|before:-13 years',
             'phone' => 'required',
-            'address' => 'required',
+            // 'address' => 'required',
             // 'country_id' => 'required|exists:countries,id',
             // 'province_id' => 'required|exists:provinces,id',
-            'longitude' => 'nullable|decimal:10,8',
-            'latitude' => 'nullable|decimal:10,8',
+            'longitude' => 'nullable|',
+            'latitude' => 'nullable|',
             'photo' => ['required', 'image', new CheckPhoto],
         ];
     }

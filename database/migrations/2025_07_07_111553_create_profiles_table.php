@@ -16,7 +16,7 @@ return new class extends Migration {
             $table->integer('gender')->nullable();
             $table->date('birthday')->nullable();
             $table->string('phone')->nullable();
-            $table->string('address')->nullable();
+            // $table->string('address')->nullable();
             $table->foreignId('user_id')->constrained('users')->cascadeOnDelete();
             // $table->foreignId('country_id')->constrained('countries')->cascadeOnDelete();
             // $table->foreignId('province_id')->constrained('provinces')->cascadeOnDelete();

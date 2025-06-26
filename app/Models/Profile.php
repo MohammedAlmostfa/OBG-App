@@ -24,7 +24,7 @@ class Profile extends Model
         'gender',
         'birthday',
         'phone',
-        'address',
+        // 'address',
         // 'country_id',
         // 'province_id',
         'longitude',
@@ -41,10 +41,13 @@ class Profile extends Model
         'user_id' => 'integer',
         'gender' => 'integer',
         'birthday' => 'date',
-        'phone' => 'string',
-        'address' => 'string',
-        'country_id' => 'integer',
-        'province_id' => 'integer',
+        'phone' => 'integer',
+        // 'address' => 'string',
+        // 'country_id' => 'integer',
+        // 'province_id' => 'integer',
+        'longitude' => 'float',
+        'latitude' => 'float',
+
     ];
 
     /**
@@ -66,8 +69,8 @@ class Profile extends Model
     public function genderStatus(): Attribute
     {
         return Attribute::make(
-            get: fn ($value) => self::GENDER_MAP[$value] ?? 'UNKNOWN',
-            set: fn ($value) => array_search($value, self::GENDER_MAP, true)
+            get: fn($value) => self::GENDER_MAP[$value] ?? 'UNKNOWN',
+            set: fn($value) => array_search($value, self::GENDER_MAP, true)
         );
     }
 
@@ -91,13 +94,13 @@ class Profile extends Model
     //     return $this->belongsTo(Country::class);
     // }
 
-//     /**
-//      * Get the province associated with this profile.
-//      *
-//      * @return BelongsTo
-//      */
-//     public function province(): BelongsTo
-//     {
-//         return $this->belongsTo(Province::class);
-//     } 
+    //     /**
+    //      * Get the province associated with this profile.
+    //      *
+    //      * @return BelongsTo
+    //      */
+    //     public function province(): BelongsTo
+    //     {
+    //         return $this->belongsTo(Province::class);
+    //     } 
 }
