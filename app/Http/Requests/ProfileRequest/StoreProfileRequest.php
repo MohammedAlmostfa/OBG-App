@@ -34,7 +34,7 @@ class StoreProfileRequest extends FormRequest
             // 'province_id' => 'required|exists:provinces,id',
             'longitude' => 'nullable|',
             'latitude' => 'nullable|',
-            'photo' => ['required', 'image', new CheckPhoto],
+            'photo' => ['nullable', 'image', new CheckPhoto],
         ];
     }
 
