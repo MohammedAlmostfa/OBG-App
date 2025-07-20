@@ -24,9 +24,7 @@ class Profile extends Model
         'gender',
         'birthday',
         'phone',
-        // 'address',
-        // 'country_id',
-        // 'province_id',
+        'address',
         'longitude',
         'latitude',
 
@@ -42,9 +40,7 @@ class Profile extends Model
         'gender' => 'integer',
         'birthday' => 'date',
         'phone' => 'integer',
-        // 'address' => 'string',
-        // 'country_id' => 'integer',
-        // 'province_id' => 'integer',
+        'address' => 'string',
         'longitude' => 'float',
         'latitude' => 'float',
 

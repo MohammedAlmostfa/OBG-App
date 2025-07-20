@@ -55,7 +55,7 @@ Route::middleware('jwt')->group(function () {
     Route::get('ratings/user/{id}', [Usercontroller::class, 'getUserRatings']);
     Route::get('user/{id}', [Usercontroller::class, 'getUserData']);
     Route::get('savedItems', [Usercontroller::class, 'getSavedItems']);
-      Route::get('favouriteUsers', [Usercontroller::class, 'getFavouriteUsers']);
+   Route::get('favouriteUsers', [Usercontroller::class, 'getFavouriteUsers']);
     Route::apiResource('ratings', RatingController::class);
 
     Route::get('/me', [ProfileController::class, 'getme']); // Retrieves details of the logged-in user

@@ -23,10 +23,8 @@ class ProfileService
                     'gender' => $data['gender'] ?? null,
                     'birthday' => $data['birthday'] ?? null,
                     'phone' => $data['phone'],
-                    // 'address' => $data['address'],
+                    'address' => $data['address'],
                     'user_id' => $user->id,
-                    // 'province_id' => $data['province_id'],
-                    // 'country_id' => $data['country_id'],
                     'longitude' => $data['longitude'] ?? null,
                     'latitude' => $data['latitude'] ?? null,
 
@@ -79,9 +77,7 @@ class ProfileService
                     'gender' => $data['gender'] ?? $profile->gender,
                     'birthday' => $data['birthday'] ?? $profile->birthday,
                     'phone' => $data['phone'] ?? $profile->phone,
-                    // 'address' => $data['address'] ?? $profile->address,
-                    // 'province_id' => $data['province_id'] ?? $profile->province_id,
-                    // 'country_id' => $data['country_id'] ?? $profile->country_id,
+                    'address' => $data['address'] ?? $profile->address,
                     'longitude' => $data['longitude'] ?? $profile->longitude,
                     'latitude' => $data['latitude'] ?? $profile->latitude,
                 ]);
@@ -133,11 +129,10 @@ class ProfileService
                 'gender' => $user->profile->gender,
                 'birthday' => $user->profile->birthday,
                 'phone' => $user->profile->phone,
-                // 'address' => $user->profile->address,
+                'address' => $user->profile->address,
                 'longitude' => $user->profile->longitude,
                 'latitude' => $user->profile->latitude,
-                // 'country_name' => json_decode($user->profile->country->name, true) ?? null,
-                // 'province_name' => json_decode($user->profile->province->name, true) ?? null,
+
             ];
 
             return [
