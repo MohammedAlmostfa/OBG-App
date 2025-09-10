@@ -21,7 +21,6 @@ class Profile extends Model
      */
     protected $fillable = [
         'user_id',
-        'gender',
         'birthday',
         'phone',
         'address',
@@ -37,7 +36,6 @@ class Profile extends Model
      */
     protected $casts = [
         'user_id' => 'integer',
-        'gender' => 'integer',
         'birthday' => 'date',
         'phone' => 'integer',
         'address' => 'string',
@@ -98,5 +96,5 @@ class Profile extends Model
     //     public function province(): BelongsTo
     //     {
     //         return $this->belongsTo(Province::class);
-    //     } 
+    //     }
 }

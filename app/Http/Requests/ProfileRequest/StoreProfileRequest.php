@@ -26,7 +26,7 @@ class StoreProfileRequest extends FormRequest
     {
         return [
             'name' => 'required|string|max:255',
-            'gender' => 'nullable',
+
             'birthday' => 'nullable|date|before:-13 years',
             'phone' => 'required',
             'address' => 'required',

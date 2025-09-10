@@ -20,7 +20,7 @@ class ProfileService
                 $user->save();
 
                 Profile::create([
-                    'gender' => $data['gender'] ?? null,
+
                     'birthday' => $data['birthday'] ?? null,
                     'phone' => $data['phone'],
                     'address' => $data['address'],
@@ -74,7 +74,6 @@ class ProfileService
 
             if ($profile) {
                 $profile->update([
-                    'gender' => $data['gender'] ?? $profile->gender,
                     'birthday' => $data['birthday'] ?? $profile->birthday,
                     'phone' => $data['phone'] ?? $profile->phone,
                     'address' => $data['address'] ?? $profile->address,
