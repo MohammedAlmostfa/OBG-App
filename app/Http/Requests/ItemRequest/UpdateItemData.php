@@ -30,7 +30,7 @@ class UpdateItemData extends FormRequest
             'type' => 'nullable|in:fixed,negotiable',
             'subCategory_id' => 'nullable|integer|exists:sub_categories,id',
             'description' => 'nullable|string',
-            'details' => 'nullable|string',
+
         ];
     }
     /**

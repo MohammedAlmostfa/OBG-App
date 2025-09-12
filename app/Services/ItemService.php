@@ -29,8 +29,8 @@ class ItemService
                 }])
                 ->addSelect([
                     DB::raw('CASE WHEN EXISTS (
-            SELECT 1 FROM item_user 
-            WHERE item_user.item_id = items.id 
+            SELECT 1 FROM item_user
+            WHERE item_user.item_id = items.id
               AND item_user.user_id = ' . (int)auth()->id() . '
         ) THEN 1 ELSE 0 END AS is_saved')
                 ])
@@ -81,7 +81,7 @@ class ItemService
                 'price'          => $data["price"],
                 'type'           => $data["type"],
                 'description'    => $data["description"] ?? null,
-                'details'        => $data["details"] ?? null,
+
             ]);
 
             if (!empty($data['photos']) && is_array($data['photos'])) {
@@ -127,7 +127,7 @@ class ItemService
                 'price'          => $data['price'] ?? $item->price,
                 'type'           => $data["type"] ?? $item->type,
                 'description'    => $data['description'] ?? $item->description,
-                'details'        => $data['details'] ?? $item->details,
+
             ]);
 
             if (!empty($data['photos']) && is_array($data['photos'])) {

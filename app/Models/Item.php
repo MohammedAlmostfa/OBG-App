@@ -47,7 +47,7 @@ class Item extends Model
         'price',
         'type',
         'description',
-        'details',
+
     ];
 
     // Optional type casting for columns (disabled currently)
@@ -58,7 +58,7 @@ class Item extends Model
     //     'name' => 'string',
     //     'price' => 'decimal:2',
     //     'description' => 'string',
-    //     'details' => 'string',
+    //
     // ];
 
     /**
