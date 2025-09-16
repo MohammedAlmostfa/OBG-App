@@ -60,15 +60,13 @@ class SubCategorySeeder extends Seeder
         $categories = Category::all();
 
         foreach ($categories as $category) {
-
-            $categoryName = json_decode($category->name, true)['en'];
-
+            $categoryName = $category->name['en']; // مباشرة لأن الـ cast array
 
             if (isset($subCategoriesByCategory[$categoryName])) {
                 foreach ($subCategoriesByCategory[$categoryName] as $subCategory) {
                     SubCategory::create([
                         'category_id' => $category->id,
-                        'name' => json_encode($subCategory),
+                        'name' => $subCategory, // array مباشرة
                     ]);
                 }
             }

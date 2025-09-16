@@ -24,10 +24,8 @@ class DatabaseSeeder extends Seeder
             ProvinceSeeder::class,
             CategorySeeder::class,
             SubCategorySeeder::class,
-           ItemSeeder::class,
+            ItemSeeder::class,
 
         ]);
-
-
     }
 }

@@ -12,9 +12,10 @@ class Category extends Model
         'name'
     ];
     public $timestamps = false;
-    protected $casts = ['name' => 'json'];
 
-
+protected $casts = [
+    'name' => 'array', // يخليها تطلع مصفوفة مباشرة
+];
     public function subCategories()
     {
         return $this->hasMany(SubCategory::class);

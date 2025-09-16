@@ -2,13 +2,18 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Controllers\Controller;
 use App\Http\Requests\ItemRequest\FilteringData;
-use App\Models\Item;
-use Illuminate\Http\Request;
-use App\Services\ItemService;
 use App\Http\Requests\ItemRequest\StoreItemData;
 use App\Http\Requests\ItemRequest\UpdateItemData;
+use App\Http\Resources\ItemDataResource;
+use App\Http\Resources\ItemDetailsResource;
 use App\Http\Resources\ItemResource;
+use App\Models\Item;
+use App\Services\ItemService;
+use Illuminate\Http\Request;
+use LDAP\Result;
+
 class ItemController extends Controller
 {
     /**
@@ -43,8 +48,8 @@ class ItemController extends Controller
         $result = $this->itemService->getAllItems($validatedData);
 
         // Return appropriate JSON response
-         return $result['status'] === 200
-            ? self::success(ItemResource::collection(collect($result['data'])), $result['message'], $result['status'])
+        return $result['status'] === 200
+            ? self::paginated($result['data'],ItemResource::class, $result['message'], $result['status'])
             : self::error(null, $result['message'], $result['status']);
     }
 /**
@@ -134,10 +139,9 @@ class ItemController extends Controller
         $result = $this->itemService->getItemData($id);
 
         // Return structured JSON response
-        return response()->json([
-            'status' => $result['status'] === 200 ? 'success' : 'error',
-            'message' => $result['message'],
-            'data' => $result['data'] ?? null,
-        ], $result['status']);
+        return $result['status'] === 200
+            ? self::success(  new ItemDetailsResource($result['data']), $result['message'],$result['status'])
+            : self::error(null, $result['message'], $result['status']);
     }
+
 }

@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Models\Item;
 use Exception;
+use App\Models\User;
 
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -20,8 +21,9 @@ class ItemService
     public function getAllItems($filteringData)
     {
         try {
+
             $items = Item::query()
-                ->select('id', 'name', 'price')
+                ->select('items.*')
                 ->with(['photos' => function ($query) {
                     $query->select('id', 'url', 'photoable_id')
                         ->orderBy('id')
@@ -35,14 +37,9 @@ class ItemService
         ) THEN 1 ELSE 0 END AS is_saved')
                 ])
                 ->when(!empty($filteringData), function ($query) use ($filteringData) {
-                    $allowed = ['category_id', 'type'];
-                    foreach ($filteringData as $key => $value) {
-                        if (in_array($key, $allowed)) {
-                            $query->where($key, $value);
-                        }
-                    }
-                })
-                ->get();
+                    $query->filter($filteringData);
+                })->orderBy('id', 'desc')->where('status', 1)->paginate(10);
+
 
             return [
                 'status' => 200,
@@ -122,7 +119,7 @@ class ItemService
 
             $item->update([
                 'category_id'    => $data['category_id'] ?? $item->category_id,
-                'subCategory_id' => $data['subCategory_id'] ?? $item->subCategory_id,
+                'sub_category_id' => $data['subCategory_id'] ?? $item->subCategory_id,
                 'name'           => $data['name'] ?? $item->name,
                 'price'          => $data['price'] ?? $item->price,
                 'type'           => $data["type"] ?? $item->type,
@@ -176,7 +173,6 @@ class ItemService
             ];
         } catch (Exception $e) {
             Log::error('Error in softDeleteItem: ' . $e->getMessage());
-
             return [
                 'status' => 500,
                 'message' => [
@@ -204,7 +200,6 @@ class ItemService
             ];
         } catch (Exception $e) {
             Log::error('Error in forceDeleteItem: ' . $e->getMessage());
-
             return [
                 'status' => 500,
                 'message' => [
@@ -223,12 +218,45 @@ class ItemService
     public function getItemData($id)
     {
         try {
-            $item = Item::with(['user' . 'photos', 'user.photo', 'user.averageRateing'])->findOrFail($id);
+            // Get the main item with relations
+            $item = Item::with([
+                'user:id,name',
+                'user.photo',
+                'category:id,name',
+                'subCategory:id,name',
+                'photos',
+                'user.ratings:user_id,review,rate',
+                'user.ratings.reviewer:id,name',
+                'user.ratings.reviewer.photo',
+            ])->findOrFail($id);
+
+            // Get related items from the same sub_category (except the current one)
+            $similarItems = Item::query()
+                ->select('items.*')
+                ->with(['photos' => function ($query) {
+                    $query->select('id', 'url', 'photoable_id')
+                        ->orderBy('id')
+                        ->limit(1);
+                }])
+                ->addSelect([
+                    DB::raw('CASE WHEN EXISTS (
+                    SELECT 1 FROM item_user
+                    WHERE item_user.item_id = items.id
+                      AND item_user.user_id = ' . (int)auth()->id() . '
+                ) THEN 1 ELSE 0 END AS is_saved')
+                ])
+                ->where('sub_category_id', $item->sub_category_id)
+                ->where('status', 1)
+                ->where('id', '!=', $item->id) // exclude current item
+                ->get();
 
             return [
                 'status' => 200,
                 'message' => __('item.get_successful'),
-                'data' => $item
+                'data' => [
+                    'item' => $item,
+                    'similar_items' => $similarItems
+                ]
             ];
         } catch (Exception $e) {
             Log::error('Error in getItemData: ' . $e->getMessage());

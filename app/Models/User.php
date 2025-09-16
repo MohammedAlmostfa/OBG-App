@@ -31,7 +31,7 @@ class User extends Authenticatable implements JWTSubject
 
     /**
      * The attributes that are mass assignable.
-     * 
+     *
      * Allows mass assignment of specific fields when creating or updating a user.
      *
      * @var array
@@ -51,6 +51,7 @@ class User extends Authenticatable implements JWTSubject
         'password',
         'remember_token',
     ];
+ protected $appends = ['average_rating'];
 
     /**
      * The attributes that should be cast to specific data types.
@@ -114,7 +115,7 @@ class User extends Authenticatable implements JWTSubject
 
     /**
      * Polymorphic one-to-many relationship for user photos.
-     * 
+     *
      * This allows a User to have multiple photos while enabling other models to use the same relationship.
      *
      * @return \Illuminate\Database\Eloquent\Relations\MorphMany
@@ -124,12 +125,14 @@ class User extends Authenticatable implements JWTSubject
         return $this->morphMany(Photo::class, 'photoable');
     }
 
+
     /**
      * Calculate and return the average rating for the user.
      *
      * @return float
      */
-    public function averageRating()
+
+    public function getAverageRatingAttribute()
     {
         return round($this->ratings()->avg('rate') ?? 0, 2);
     }
@@ -156,7 +159,7 @@ class User extends Authenticatable implements JWTSubject
 
     /**
      * Many-to-Many relationship: User saved multiple items.
-     * 
+     *
      * This allows the user to save items using a pivot table "item_user".
      *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
@@ -168,7 +171,7 @@ class User extends Authenticatable implements JWTSubject
 
     /**
      * Many-to-Many relationship: User has favorite users.
-     * 
+     *
      * This allows users to favorite each other using a pivot table "users_users".
      *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany

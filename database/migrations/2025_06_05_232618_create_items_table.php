@@ -14,14 +14,16 @@ return new class extends Migration {
             $table->id();
             $table->string('name');
             $table->string('description')->nullable();
-
             $table->decimal('price', 10, 2);
-            $table->integer('type');
+            $table->integer('type')->default(0);
+            $table->integer('status')->default(1);
+            $table->integer('availability')->default(1);
             $table->foreignId('user_id')->constrained('users')->cascadeOnDelete();
             $table->foreignId('category_id')->constrained('categories')->cascadeOnDelete();
-            $table->foreignId('subCategory_id')->constrained('sub_categories')->cascadeOnDelete();
+            $table->foreignId('sub_category_id')->constrained('sub_categories')->cascadeOnDelete();
+
             $table->timestamps();
-             $table->softDeletes();
+            $table->softDeletes();
         });
     }
 

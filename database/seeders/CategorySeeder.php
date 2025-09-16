@@ -31,7 +31,7 @@ class CategorySeeder extends Seeder
 
         foreach ($categories as $Category) {
             Category::create([
-                'name' => json_encode($Category),
+              'name' => $Category,
             ]);
         }
     }

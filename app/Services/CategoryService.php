@@ -11,7 +11,7 @@ class CategoryService
     public function getCategories()
     {
         try {
-            $categories = Category::select('name', 'id')->get();
+            $categories = Category::select('id', 'name')->with('subCategories:id,category_id,name')->get();
 
             return [
                 'message' => 'Categories retrieved successfully',
