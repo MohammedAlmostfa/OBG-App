@@ -49,7 +49,7 @@ Route::get('subCategories/category/{id}', [SubCategoryController::class, 'index'
 Route::middleware('jwt')->group(function () {
 
     Route::apiResource('profile', ProfileController::class);
-
+    Route::get('items/near', [ItemController::class, 'nearitem']);
 
     Route::get('items/user/{id}', [Usercontroller::class, 'getUserItems']);
     Route::get('ratings/user/{id}', [Usercontroller::class, 'getUserRatings']);

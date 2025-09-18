@@ -12,8 +12,14 @@ use App\Http\Resources\ItemResource;
 use App\Models\Item;
 use App\Services\ItemService;
 use Illuminate\Http\Request;
-use LDAP\Result;
 
+/**
+ * Class ItemController
+ *
+ * Handles all CRUD operations and listing for Item resources.
+ *
+ * @package App\Http\Controllers
+ */
 class ItemController extends Controller
 {
     /**
@@ -34,7 +40,7 @@ class ItemController extends Controller
     }
 
     /**
-     * Display a listing of the items.
+     * Display a paginated listing of items with optional filtering.
      *
      * @param FilteringData $request
      * @return \Illuminate\Http\JsonResponse
@@ -47,12 +53,33 @@ class ItemController extends Controller
         // Fetch filtered items via service
         $result = $this->itemService->getAllItems($validatedData);
 
-        // Return appropriate JSON response
+        // Return paginated JSON response or error
         return $result['status'] === 200
-            ? self::paginated($result['data'],ItemResource::class, $result['message'], $result['status'])
+            ? self::paginated($result['data'], ItemResource::class, $result['message'], $result['status'])
             : self::error(null, $result['message'], $result['status']);
     }
-/**
+
+    /**
+     * Display a paginated listing of items near the authenticated user.
+     *
+     * @param FilteringData $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function nearitem(FilteringData $request)
+    {
+        // Validate incoming request data
+        $validatedData = $request->validated();
+
+        // Fetch nearby items via service
+        $result = $this->itemService->getNearItems($validatedData);
+
+        // Return paginated JSON response or error
+        return $result['status'] === 200
+            ? self::paginated($result['data'], ItemResource::class, $result['message'], $result['status'])
+            : self::error(null, $result['message'], $result['status']);
+    }
+
+    /**
      * Store a newly created item in storage.
      *
      * @param StoreItemData $request
@@ -66,7 +93,7 @@ class ItemController extends Controller
         // Delegate creation to the service
         $result = $this->itemService->storeItem($validatedData);
 
-        // Return appropriate JSON response
+        // Return success or error response
         return $result['status'] === 200
             ? self::success(null, $result['message'], $result['status'])
             : self::error(null, $result['message'], $result['status']);
@@ -87,7 +114,7 @@ class ItemController extends Controller
         // Delegate update to the service
         $result = $this->itemService->updateItem($id, $validatedData);
 
-        // Return appropriate JSON response
+        // Return success or error response
         return $result['status'] === 200
             ? self::success(null, $result['message'], $result['status'])
             : self::error(null, $result['message'], $result['status']);
@@ -104,14 +131,14 @@ class ItemController extends Controller
         // Delegate soft deletion to the service
         $result = $this->itemService->softDeleteItem($item);
 
-        // Return appropriate JSON response
+        // Return success or error response
         return $result['status'] === 200
             ? self::success(null, $result['message'], $result['status'])
             : self::error(null, $result['message'], $result['status']);
     }
 
     /**
-     * Permanently delete the specified item.
+     * Permanently delete the specified item from the database.
      *
      * @param Item $item
      * @return \Illuminate\Http\JsonResponse
@@ -121,27 +148,26 @@ class ItemController extends Controller
         // Call service to permanently delete the item
         $result = $this->itemService->forceDeleteItem($item->id);
 
-        // Return appropriate JSON response
+        // Return success or error response
         return $result['status'] === 200
             ? self::success(null, $result['message'], $result['status'])
             : self::error(null, $result['message'], $result['status']);
     }
 
     /**
-     * Display the specified item details.
+     * Display the details of a specific item along with related data.
      *
      * @param int $id
      * @return \Illuminate\Http\JsonResponse
      */
     public function show($id)
     {
-        // Fetch single item details
+        // Fetch single item details via service
         $result = $this->itemService->getItemData($id);
 
-        // Return structured JSON response
+        // Return structured JSON response or error
         return $result['status'] === 200
-            ? self::success(  new ItemDetailsResource($result['data']), $result['message'],$result['status'])
+            ? self::success(new ItemDetailsResource($result['data']), $result['message'], $result['status'])
             : self::error(null, $result['message'], $result['status']);
     }
-
 }

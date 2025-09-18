@@ -31,7 +31,7 @@ class StoreItemData extends FormRequest
             'category_id' => 'required|integer|exists:categories,id',
             'subCategory_id' => 'required|integer|exists:sub_categories,id',
             'description' => 'nullable|string',
-            'photos' => ['required', 'array'],
+            'photos' => ['required', 'array','max:4'],
             'photos.*' => ['required', 'image', new CheckPhoto]
         ];
     }
