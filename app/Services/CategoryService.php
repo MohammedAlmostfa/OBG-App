@@ -11,7 +11,21 @@ class CategoryService
     public function getCategories()
     {
         try {
-            $categories = Category::select('id', 'name')->with('subCategories:id,category_id,name')->get();
+            $categories = Category::select('id', 'name')
+                ->with([
+                    'subCategories:id,category_id,name',
+                    'photo'
+                ])
+                ->get()
+                ->map(function ($category) {
+                    return [
+                        'id' => $category->id,
+                        'name' => $category->name,
+                        'photo' => $category->photo->first()?->url ?? null,
+                        'subCategories' => $category->subCategories,
+                    ];
+                });
+
 
             return [
                 'message' => 'Categories retrieved successfully',

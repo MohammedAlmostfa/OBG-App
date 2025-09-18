@@ -3,7 +3,6 @@
 namespace Database\Seeders;
 
 use App\Models\Category;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
 class CategorySeeder extends Seeder
@@ -25,13 +24,19 @@ class CategorySeeder extends Seeder
             ['en' => 'Health', 'ar' => 'الصحة'],
             ['en' => 'Kids & Baby Items', 'ar' => 'الأطفال'],
             ['en' => 'Furniture', 'ar' => 'الأثاث'],
-
         ];
 
+        foreach ($categories as $catData) {
+            // إنشاء الكاتيجوري
+            $category = Category::create([
+                'name' => $catData,
+            ]);
 
-        foreach ($categories as $Category) {
-            Category::create([
-              'name' => $Category,
+
+            $slug = !empty($catData['en']) ? strtolower(str_replace(' ', '_', $catData['en'])) : "00";
+
+            $category->photo()->create([
+                'url' => "categories/{$slug}.svg"
             ]);
         }
     }

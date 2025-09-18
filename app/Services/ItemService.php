@@ -137,35 +137,41 @@ class ItemService
      * @param array $data Input data validated from request.
      * @return array Returns status and message.
      */
+
+
     public function storeItem($data)
     {
         try {
-            $user = auth()->user();
+            return DB::transaction(function () use ($data) {
+                $user = auth()->user();
 
-            // Create the item
-            $item = Item::create([
-                'user_id'        => $user->id,
-                'category_id'    => $data["category_id"],
-                'sub_category_id'=> $data["subCategory_id"],
-                'name'           => $data["name"],
-                'price'          => $data["price"],
-                'type'           => $data["type"],
-                'description'    => $data["description"] ?? null,
-            ]);
 
-            // Save photos
-            if (!empty($data['photos']) && is_array($data['photos'])) {
-                foreach ($data['photos'] as $photo) {
-                    $imageName = Str::random(32) . '.' . $photo->getClientOriginalExtension();
-                    $path = $photo->storeAs('items/photos', $imageName, 'public');
-                    $item->photos()->create(['url' => $path]);
+                $item = Item::create([
+                    'user_id'        => $user->id,
+                    'category_id'    => $data["category_id"],
+                    'sub_category_id' => $data["subCategory_id"],
+                    'name'           => $data["name"],
+                    'price'          => $data["price"],
+                    'type'           => $data["type"],
+                    'description'    => $data["description"] ?? null,
+                ]);
+
+
+                if (!empty($data['photos']) && is_array($data['photos'])) {
+                    foreach ($data['photos'] as $photo) {
+                        $imageName = Str::random(32) . '.' . $photo->getClientOriginalExtension();
+                        $folder = 'items/photos/' . now()->format('Y-m-d');
+                        $path = $photo->storeAs($folder, $imageName, 'public');
+
+                        $item->photos()->create(['url' => $path]);
+                    }
                 }
-            }
 
-            return [
-                'status' => 200,
-                'message' => __('item.create_successful'),
-            ];
+                return [
+                    'status' => 200,
+                    'message' => __('item.create_successful'),
+                ];
+            });
         } catch (Exception $e) {
             Log::error('Error in storeItem: ' . $e->getMessage());
 
@@ -178,6 +184,7 @@ class ItemService
         }
     }
 
+
     /**
      * Update an existing item with new data.
      *
@@ -188,34 +195,39 @@ class ItemService
     public function updateItem($id, $data)
     {
         try {
-            $item = Item::findOrFail($id);
+            return DB::transaction(function () use ($id, $data) {
+                $item = Item::findOrFail($id);
 
-            // Update item details
-            $item->update([
-                'category_id'     => $data['category_id'] ?? $item->category_id,
-                'sub_category_id' => $data['subCategory_id'] ?? $item->sub_category_id,
-                'name'            => $data['name'] ?? $item->name,
-                'price'           => $data['price'] ?? $item->price,
-                'type'            => $data["type"] ?? $item->type,
-                'description'     => $data['description'] ?? $item->description,
-            ]);
 
-            // Update photos if provided
-            if (!empty($data['photos']) && is_array($data['photos'])) {
-                $item->photos()->delete();
-                foreach ($data['photos'] as $photo) {
-                    if ($photo instanceof \Illuminate\Http\UploadedFile) {
+                $item->update([
+                    'category_id'     => $data['category_id'] ?? $item->category_id,
+                    'sub_category_id' => $data['subCategory_id'] ?? $item->sub_category_id,
+                    'name'            => $data['name'] ?? $item->name,
+                    'price'           => $data['price'] ?? $item->price,
+                    'type'            => $data["type"] ?? $item->type,
+                    'description'     => $data['description'] ?? $item->description,
+                ]);
+
+
+                if (!empty($data['photos']) && is_array($data['photos'])) {
+
+                    $item->photo()->delete();
+
+
+                    foreach ($data['photos'] as $photo) {
                         $imageName = Str::random(32) . '.' . $photo->getClientOriginalExtension();
-                        $path = $photo->storeAs('items/photos', $imageName, 'public');
+                        $folder = 'items/photos/' . now()->format('Y-m-d');
+                        $path = $photo->storeAs($folder, $imageName, 'public');
+
                         $item->photos()->create(['url' => $path]);
                     }
                 }
-            }
 
-            return [
-                'status' => 200,
-                'message' => __('item.update_successful'),
-            ];
+                return [
+                    'status' => 200,
+                    'message' => __('item.update_successful'),
+                ];
+            });
         } catch (Exception $e) {
             Log::error('updateItem $data content:', $data);
             Log::error('Error in updateItem: ' . $e->getMessage());
@@ -228,6 +240,7 @@ class ItemService
             ];
         }
     }
+
 
     /**
      * Soft delete an item (move to trash).
