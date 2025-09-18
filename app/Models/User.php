@@ -180,4 +180,24 @@ class User extends Authenticatable implements JWTSubject
     {
         return $this->belongsToMany(User::class, 'users_users', 'user_id', 'favorite_user_id');
     }
+
+    /**
+ * Get the first name from the full name.
+ */
+public function getFirstNameAttribute()
+{
+    $parts = explode(' ', $this->name);
+    return $parts[0] ?? null;
+}
+
+/**
+ * Get the last name from the full name.
+ */
+public function getLastNameAttribute()
+{
+    $parts = explode(' ', $this->name);
+    array_shift($parts); // remove first name
+    return implode(' ', $parts) ?: null;
+}
+
 }

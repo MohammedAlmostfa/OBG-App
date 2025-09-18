@@ -123,14 +123,15 @@ class ProfileService
 
             $userData = [
                 'id' => $user->id,
-                'name' => $user->name,
+                "firstName" => $user->first_name,
+                "lastName"  => $user->last_name,
                 'email' => $user->email,
-                'gender' => $user->profile->gender,
                 'birthday' => $user->profile->birthday,
                 'phone' => $user->profile->phone,
                 'address' => $user->profile->address,
                 'longitude' => $user->profile->longitude,
                 'latitude' => $user->profile->latitude,
+                'photo' => $user->photo->first()->url ?? null,
 
             ];
 
