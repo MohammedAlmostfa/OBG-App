@@ -26,11 +26,13 @@ public function createProfile(array $data): array
                     ],
                 ];
             }
+$user->name = $data['name'];
+                $user->save();
 
 
             // إنشاء البروفايل
             Profile::create([
-                'name'=> $data['name'],
+
                 'birthday' => $data['birthday'] ?? null,
                 'phone' => $data['phone'],
                 'address' => $data['address'],
@@ -72,7 +74,11 @@ public function updateProfile(array $data): array
     try {
         return DB::transaction(function () use ($data) {
             $user = Auth::user();
+
             $profile = $user->profile;
+$user->name = $data['name'];
+                $user->save();
+
 
             if (!$profile) {
                 return [
