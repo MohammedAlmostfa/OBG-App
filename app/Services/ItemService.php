@@ -7,7 +7,7 @@ use Exception;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
-
+use Illuminate\Support\Facades\Storage;
 /**
  * Class ItemService
  *
@@ -184,21 +184,20 @@ class ItemService
         }
     }
 
-
-    /**
-     * Update an existing item with new data.
+/**
+     * Update an existing item with new data and handle photo replacement.
      *
      * @param int $id Item ID to update.
      * @param array $data Input data validated from request.
      * @return array Returns status and message.
      */
-    public function updateItem($id, $data)
+  public function updateItem($id, $data)
     {
         try {
             return DB::transaction(function () use ($id, $data) {
                 $item = Item::findOrFail($id);
 
-
+                // Update basic fields
                 $item->update([
                     'category_id'     => $data['category_id'] ?? $item->category_id,
                     'sub_category_id' => $data['subCategory_id'] ?? $item->sub_category_id,
@@ -208,18 +207,26 @@ class ItemService
                     'description'     => $data['description'] ?? $item->description,
                 ]);
 
-
+                // Replace photos if new ones provided
                 if (!empty($data['photos']) && is_array($data['photos'])) {
 
-                    $item->photo()->delete();
+                    // Delete old photos from storage and database
+                    foreach ($item->photos as $oldPhoto) {
+                        if (Storage::disk('public')->exists($oldPhoto->url)) {
+                            Storage::disk('public')->delete($oldPhoto->url);
+                        }
+                        $oldPhoto->delete();
+                    }
 
-
+                    // Upload new photos
                     foreach ($data['photos'] as $photo) {
-                        $imageName = Str::random(32) . '.' . $photo->getClientOriginalExtension();
-                        $folder = 'items/photos/' . now()->format('Y-m-d');
-                        $path = $photo->storeAs($folder, $imageName, 'public');
+                        if ($photo instanceof \Illuminate\Http\UploadedFile) {
+                            $imageName = Str::random(32) . '.' . $photo->getClientOriginalExtension();
+                            $folder = 'items/photos/' . now()->format('Y-m-d');
+                            $path = $photo->storeAs($folder, $imageName, 'public');
 
-                        $item->photos()->create(['url' => $path]);
+                            $item->photos()->create(['url' => $path]);
+                        }
                     }
                 }
 
@@ -241,9 +248,8 @@ class ItemService
         }
     }
 
-
     /**
-     * Soft delete an item (move to trash).
+     * Soft delete an item (move to trash) and delete associated photos.
      *
      * @param Item $item
      * @return array Returns status and message.
@@ -251,7 +257,14 @@ class ItemService
     public function softDeleteItem(Item $item)
     {
         try {
-            $item->delete();
+            // Delete associated photos from storage
+            foreach ($item->photos as $photo) {
+                if (Storage::disk('public')->exists($photo->url)) {
+                    Storage::disk('public')->delete($photo->url);
+                }
+            }
+
+            $item->delete(); // Soft delete
 
             return [
                 'status' => 200,
@@ -269,7 +282,7 @@ class ItemService
     }
 
     /**
-     * Permanently delete a soft-deleted item.
+     * Permanently delete a soft-deleted item and remove associated photos.
      *
      * @param int $id Item ID to force delete.
      * @return array Returns status and message.
@@ -278,7 +291,15 @@ class ItemService
     {
         try {
             $item = Item::withTrashed()->findOrFail($id);
-            $item->forceDelete();
+
+            // Delete associated photos from storage
+            foreach ($item->photos as $photo) {
+                if (Storage::disk('public')->exists($photo->url)) {
+                    Storage::disk('public')->delete($photo->url);
+                }
+            }
+
+            $item->forceDelete(); // Permanently delete
 
             return [
                 'status' => 200,
