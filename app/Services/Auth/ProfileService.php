@@ -174,7 +174,7 @@ class ProfileService
                 'address'    => $user->profile->address ?? null,
                 'longitude'  => $user->profile->longitude ?? null,
                 'latitude'   => $user->profile->latitude ?? null,
-                'photo'      => $user->photo->first()?->url ?? null, // nullsafe operator
+                'photo_url'      => $user->photo->first() ? asset('storage/' . $user->photo->first()->url) : null,
             ];
 
             return [

@@ -22,7 +22,7 @@ class UserRatingResource extends JsonResource
             'created_at' => $this->created_at,
             'user_name'  => $this->reviewer->name,
             'user_id'    => $this->reviewer->id,
-            'photo_url' => optional($this->reviewer->photo->first())->url,
+            'photo_url' => optional($this->reviewer->photo->first())->url ? asset('storage/' . $this->photo->url) : null,
 
         ];
     }
