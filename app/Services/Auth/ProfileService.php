@@ -3,11 +3,12 @@
 namespace App\Services\Auth;
 
 use Exception;
+use App\Models\User;
 use App\Models\Profile;
-use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 
 class ProfileService
@@ -162,25 +163,38 @@ class ProfileService
     {
         try {
             $user = Auth::user();
-            $user->load('profile', 'photo');
 
-            $userData = [
-                'id'         => $user->id,
-                'firstName'  => $user->first_name,
-                'lastName'   => $user->last_name,
-                'email'      => $user->email,
-                'birthday'   => $user->profile->birthday ?? null,
-                'phone'      => $user->profile->phone ?? null,
-                'address'    => $user->profile->address ?? null,
-                'longitude'  => $user->profile->longitude ?? null,
-                'latitude'   => $user->profile->latitude ?? null,
-                'photo_url'      => $user->photo->first() ? asset('storage/' . $user->photo->first()->url) : null,
-            ];
+
+
+           $user = User::select('id', 'name')
+    ->with([
+        'photo:id,photoable_id,photoable_type,url',
+        'profile:id,user_id,birthday,phone,address,latitude,longitude',
+        'ratingsReceived' => fn($q) => $q->latest()->limit(5)
+            ->select('id', 'rate', 'review', 'user_id', 'rated_user_id')
+            ->with([
+                'reviewer:id,name',
+                'reviewer.photo:id,photoable_id,photoable_type,url'
+            ]),
+        'items' => fn($q) => $q->latest()->limit(5)
+            ->select('id', 'name', 'description', 'price', 'user_id')
+
+    ])
+    ->withAvg('ratingsReceived', 'rate')
+     ->withCount('ratingsReceived')
+    ->find(Auth::id());
+
+
+
+
+
+
+
 
             return [
                 'status'  => 200,
                 'message' => __('profile.user_data_retrieved_successfully'),
-                'data'    => $userData,
+                'data'    => $user,
             ];
         } catch (Exception $e) {
             Log::error('Error occurred while retrieving user data: ' . $e->getMessage());

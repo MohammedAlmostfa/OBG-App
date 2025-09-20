@@ -8,6 +8,7 @@ use App\Services\Auth\ProfileService;
 use App\Http\Requests\Profile\StorProfileRequest;
 use App\Http\Requests\ProfileRequest\StoreProfileRequest;
 use App\Http\Requests\ProfileRequest\UpdateProfileRequest;
+use App\Http\Resources\profileResource;
 
 /**
  * Class ProfileController
@@ -80,7 +81,7 @@ class ProfileController extends Controller
 
         // Return appropriate response based on the result
         return $result['status'] === 200
-            ? self::success($result['data'], $result['message'], $result['status'])
+            ? self::success( new profileResource($result['data']), $result['message'], $result['status'])
             : self::error(null, $result['message'], $result['status']);
     }
 

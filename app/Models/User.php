@@ -51,7 +51,7 @@ class User extends Authenticatable implements JWTSubject
         'password',
         'remember_token',
     ];
- protected $appends = ['average_rating'];
+
 
     /**
      * The attributes that should be cast to specific data types.
@@ -104,14 +104,21 @@ class User extends Authenticatable implements JWTSubject
     }
 
     /**
-     * One-to-many relationship: User has many Ratings.
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     * Get all ratings the user has **given**.
      */
-    public function ratings()
+    public function ratingsGiven()
     {
         return $this->hasMany(Rating::class, 'user_id');
     }
+
+    /**
+     * Get all ratings the user has **received**.
+     */
+    public function ratingsReceived()
+    {
+        return $this->hasMany(Rating::class, 'rated_user_id');
+    }
+
 
     /**
      * Polymorphic one-to-many relationship for user photos.
@@ -132,9 +139,9 @@ class User extends Authenticatable implements JWTSubject
      * @return float
      */
 
-    public function getAverageRatingAttribute()
+    public function averageRatings()
     {
-        return round($this->ratings()->avg('rate') ?? 0, 2);
+        return round($this->ratingsReceived()->avg('rate') ?? 0, 2);
     }
 
     /**
@@ -144,7 +151,7 @@ class User extends Authenticatable implements JWTSubject
      */
     public function countRatings()
     {
-        return $this->ratings()->count();
+        return $this->ratingsReceived()->count();
     }
 
     /**
@@ -182,22 +189,21 @@ class User extends Authenticatable implements JWTSubject
     }
 
     /**
- * Get the first name from the full name.
- */
-public function getFirstNameAttribute()
-{
-    $parts = explode(' ', $this->name);
-    return $parts[0] ?? null;
-}
+     * Get the first name from the full name.
+     */
+    public function getFirstNameAttribute()
+    {
+        $parts = explode(' ', $this->name);
+        return $parts[0] ?? null;
+    }
 
-/**
- * Get the last name from the full name.
- */
-public function getLastNameAttribute()
-{
-    $parts = explode(' ', $this->name);
-    array_shift($parts); // remove first name
-    return implode(' ', $parts) ?: null;
-}
-
+    /**
+     * Get the last name from the full name.
+     */
+    public function getLastNameAttribute()
+    {
+        $parts = explode(' ', $this->name);
+        array_shift($parts); // remove first name
+        return implode(' ', $parts) ?: null;
+    }
 }
