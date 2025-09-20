@@ -14,8 +14,8 @@ class profileResource extends JsonResource
             'name' => $this->name,
             'firstName' => $this->first_name,
             'lastName' => $this->last_name,
-       'averageRating' => $this->ratings_received_avg_rate ?? 0,
-            'countRatings' => $this->ratings_received_count ?? 0,
+            'averageRating' => $this->ratings_received_avg_rate ?? 0,
+            'countRatings' => $this->countRatings(),
             'photo_url' => $this->photo->first() ? asset('storage/' . $this->photo->first()->url) : null,
 
 
@@ -46,7 +46,7 @@ class profileResource extends JsonResource
                 return [
                     'id' => $item->id,
                     'name' => $item->name,
-                    'description' => $item->description,
+
                     'price' => $item->price,
                 ];
             }),

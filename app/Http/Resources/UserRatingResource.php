@@ -9,9 +9,6 @@ class UserRatingResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
-     *
-     * @param Request $request
-     * @return array<string, mixed>
      */
     public function toArray(Request $request): array
     {
@@ -19,11 +16,14 @@ class UserRatingResource extends JsonResource
             'id'         => $this->id,
             'rate'       => $this->rate,
             'review'     => $this->review,
-            'created_at' => $this->created_at,
-            'user_name'  => $this->reviewer->name,
-            'user_id'    => $this->reviewer->id,
-            'photo_url' => optional($this->reviewer->photo->first())->url ? asset('storage/' . $this->photo->url) : null,
 
+            'reviewer'   => [
+                'id'             => $this->reviewer->id ?? null,
+                'name'           => $this->reviewer->name ?? null,
+                'photo_url'      => $this->reviewer->photo->first()
+                    ? asset('storage/' . $this->reviewer->photo->first()->url)
+                    : null,
+            ],
         ];
     }
 }

@@ -28,8 +28,8 @@ class UserService
             // Fetch ratings along with reviewer details and associated photo
             $ratings = Rating::with([
                 'reviewer:name,id',    // Retrieve reviewer's name and ID
-                'reviewer.photo:url,photoable_id' // Fetch reviewer's profile photo
-            ])->where('user_id', $id)->get();
+                'reviewer.photo:url,photoable_id,photoable_type' // Fetch reviewer's profile photo
+            ])->where('user_id', $id)->paginate(10);
 
             return [
                 'status'  => 200,
@@ -64,7 +64,7 @@ class UserService
                     $query->select('id', 'url', 'photoable_id')->orderBy('id')->limit(1);
                 }])
                 ->where('user_id', $id)
-                ->get();
+                ->paginate(10);
 
             return [
                 'status'  => 200,
@@ -99,8 +99,8 @@ public function getUserData($id)
             ->withCount(['ratings as countRatings', 'items as countItems'])
             ->addSelect([
                 DB::raw("CASE WHEN EXISTS (
-                    SELECT 1 FROM users_users 
-                    WHERE users_users.favorite_user_id = {$id} 
+                    SELECT 1 FROM users_users
+                    WHERE users_users.favorite_user_id = {$id}
                       AND users_users.user_id = " . (int)auth()->id() . "
                 ) THEN 1 ELSE 0 END AS is_favourite")
             ])

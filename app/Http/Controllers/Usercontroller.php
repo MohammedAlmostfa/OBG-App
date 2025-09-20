@@ -46,7 +46,7 @@ class UserController extends Controller
 
         // Return appropriate JSON response
         return $result['status'] === 200
-            ? self::success(ItemResource::collection(collect($result['data'])), $result['message'], $result['status'])
+            ? self::paginated($result['data'], ItemResource::class, $result['message'], $result['status'])
             : self::error(null, $result['message'], $result['status']);
     }
 
@@ -63,7 +63,7 @@ class UserController extends Controller
 
         // Return appropriate JSON response
         return $result['status'] === 200
-            ? self::success(UserRatingResource::collection(collect($result['data'])), $result['message'], $result['status'])
+            ? self::paginated($result['data'], UserRatingResource::class, $result['message'], $result['status'])
             : self::error(null, $result['message'], $result['status']);
     }
 
@@ -96,7 +96,7 @@ class UserController extends Controller
 
         // Return appropriate JSON response
         return $result['status'] === 200
-            ? self::success(ItemResource::collection(collect($result['data'])), $result['message'], $result['status'])
+            ? self::zz(ItemResource::collection(collect($result['data'])), $result['message'], $result['status'])
             : self::error(null, $result['message'], $result['status']);
     }
 

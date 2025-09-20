@@ -166,29 +166,23 @@ class ProfileService
 
 
 
-           $user = User::select('id', 'name')
-    ->with([
-        'photo:id,photoable_id,photoable_type,url',
-        'profile:id,user_id,birthday,phone,address,latitude,longitude',
-        'ratingsReceived' => fn($q) => $q->latest()->limit(5)
-            ->select('id', 'rate', 'review', 'user_id', 'rated_user_id')
-            ->with([
-                'reviewer:id,name',
-                'reviewer.photo:id,photoable_id,photoable_type,url'
-            ]),
-        'items' => fn($q) => $q->latest()->limit(5)
-            ->select('id', 'name', 'description', 'price', 'user_id')
+            $user = User::select('id', 'name')
+                ->with([
+                    'photo:id,photoable_id,photoable_type,url',
+                    'profile:id,user_id,birthday,phone,address,latitude,longitude',
+                    'ratingsReceived' => fn($q) => $q->latest()->limit(5)
+                        ->select('id', 'rate', 'review', 'user_id', 'rated_user_id')
+                        ->with([
+                            'reviewer:id,name',
+                            'reviewer.photo:id,photoable_id,photoable_type,url'
+                        ]),
+                    'items' => fn($q) => $q->latest()->limit(5)
+                        ->select('id', 'name', 'price', 'user_id')
 
-    ])
-    ->withAvg('ratingsReceived', 'rate')
-     ->withCount('ratingsReceived')
-    ->find(Auth::id());
-
-
-
-
-
-
+                ])
+                ->withAvg('ratingsReceived', 'rate')
+                ->withCount('ratingsReceived')
+                ->find(Auth::id());
 
 
             return [
