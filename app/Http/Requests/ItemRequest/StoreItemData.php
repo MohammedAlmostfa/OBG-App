@@ -27,11 +27,11 @@ class StoreItemData extends FormRequest
         return [
             'name' => 'required|string|max:255',
             'price' => 'required|numeric|min:0',
-            'type' => 'required|in:fixed,negotiable,ثابت,قابل للتفاوض',
+            'type' => 'required|in:1,0',
             'category_id' => 'required|integer|exists:categories,id',
             'subCategory_id' => 'required|integer|exists:sub_categories,id',
             'description' => 'nullable|string',
-            'status'=>'required|in:new,used,جديد,مستعمل',
+            'status'=>'required|in:1,0',
             'photos' => ['required', 'array','max:4'],
             'photos.*' => ['required', 'image', new CheckPhoto]
         ];

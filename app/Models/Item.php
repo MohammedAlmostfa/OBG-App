@@ -146,8 +146,8 @@ class Item extends Model
     {
         return Attribute::make(
             get: fn($value) => self::TYPE_MAP[$value] ?? ['en' => 'Unknown', 'ar' => 'غير معروف'],
-            set: fn($value) => collect(self::TYPE_MAP)
-                ->search(fn($type) => in_array($value, $type, true)) ?? 0
+            // set: fn($value) => collect(self::TYPE_MAP)
+            //     ->search(fn($type) => in_array($value, $type, true)) ?? 0
         );
     }
 
@@ -159,8 +159,8 @@ class Item extends Model
     {
         return Attribute::make(
             get: fn($value) => self::STATUS_MAP[$value] ?? ['en' => 'Unknown', 'ar' => 'غير معروف'],
-            set: fn($value) => collect(self::STATUS_MAP)
-                ->search(fn($status) => in_array($value, $status, true)) ?? 1
+            // set: fn($value) => collect(self::STATUS_MAP)
+            //     ->search(fn($status) => in_array($value, $status, true)) ?? 1
         );
     }
 
@@ -172,8 +172,8 @@ class Item extends Model
     {
         return Attribute::make(
             get: fn($value) => self::AVAILABILITY_MAP[$value] ?? ['en' => 'Unknown', 'ar' => 'غير معروف'],
-            set: fn($value) => collect(self::AVAILABILITY_MAP)
-                ->search(fn($status) => in_array($value, $status, true)) ?? 1
+            // set: fn($value) => collect(self::AVAILABILITY_MAP)
+            //     ->search(fn($status) => in_array($value, $status, true)) ?? 1
         );
     }
 }

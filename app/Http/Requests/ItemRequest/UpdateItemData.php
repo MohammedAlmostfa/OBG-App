@@ -27,8 +27,8 @@ class UpdateItemData extends FormRequest
             'name' => 'nullable|string|max:255',
             'price' => 'nullable|numeric|min:0',
             'category_id' => 'nullable|integer|exists:categories,id',
-            'status' => 'required|in:new,used,جديد,مستعمل',
-            'type' => 'nullable|in:fixed,negotiable,ثابت,قابل للتفاوض',
+            'status' => 'required|in:1,0',
+            'type' => 'nullable|in:1,0',
             'subCategory_id' => 'nullable|integer|exists:sub_categories,id',
             'description' => 'nullable|string',
 
