@@ -16,7 +16,6 @@ class UserRatingResource extends JsonResource
             'id'         => $this->id,
             'rate'       => $this->rate,
             'review'     => $this->review,
-
             'reviewer'   => [
                 'id'             => $this->reviewer->id ?? null,
                 'name'           => $this->reviewer->name ?? null,

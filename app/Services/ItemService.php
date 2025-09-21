@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Storage;
+
 /**
  * Class ItemService
  *
@@ -153,6 +154,7 @@ class ItemService
                     'name'           => $data["name"],
                     'price'          => $data["price"],
                     'type'           => $data["type"],
+                    'status'            => $data['status'],
                     'description'    => $data["description"] ?? null,
                 ]);
 
@@ -184,14 +186,14 @@ class ItemService
         }
     }
 
-/**
+    /**
      * Update an existing item with new data and handle photo replacement.
      *
      * @param int $id Item ID to update.
      * @param array $data Input data validated from request.
      * @return array Returns status and message.
      */
-  public function updateItem($id, $data)
+    public function updateItem($id, $data)
     {
         try {
             return DB::transaction(function () use ($id, $data) {
@@ -204,6 +206,7 @@ class ItemService
                     'name'            => $data['name'] ?? $item->name,
                     'price'           => $data['price'] ?? $item->price,
                     'type'            => $data["type"] ?? $item->type,
+                    'status'            => $data["status"] ?? $item->status,
                     'description'     => $data['description'] ?? $item->description,
                 ]);
 
