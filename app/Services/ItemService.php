@@ -46,7 +46,7 @@ class ItemService
                     $query->filter($filteringData); // Apply custom filters
                 })
                 ->orderBy('id', 'desc')
-                ->where('status', 1) // Only active items
+                ->where('availability', 1) // Only active items
                 ->paginate(10);      // Paginate results
 
             return [
