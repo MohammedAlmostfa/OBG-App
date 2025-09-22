@@ -363,7 +363,7 @@ class ItemService
                 ->where('sub_category_id', $item->sub_category_id)
                 ->where('status', 1)
                 ->where('id', '!=', $item->id) // exclude current item
-                ->get();
+                    ->limit(5)->get();
 
             return [
                 'status' => 200,
