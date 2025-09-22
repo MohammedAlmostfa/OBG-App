@@ -43,24 +43,31 @@ class ItemDataResource extends JsonResource
             // User info
             'user' => [
                 'id'             => $this->user->id ?? null,
-                'name'           => $this->user->name ?? null,
-                'average_rating' => $this->user->ratings()->avg('rate') ?? 0,
+
+                'name' => $this->user->name,
+                'firstName' => $this->user->first_name,
+                'lastName' => $this->user->last_name,
+                'averageRating' => $this->user->averageRatings() ?? 0,
+                'countRatings' => $this->user->countRatings(),
                 'photo_url'          => $this->user->photo->first()
-                                    ? asset('storage/' . $this->user->photo->first()->url)
-                                    : null,
-                'ratings'        => $this->user->ratings->map(fn($rating) => [
-                    'user_id'  => $rating->user_id,
-                    'review'   => $rating->review,
-                    'rate'     => $rating->rate,
-                    'reviewer' => [
-                        'id'             => $rating->reviewer->id ?? null,
-                        'name'           => $rating->reviewer->name ?? null,
-                        'average_rating' => $rating->reviewer->ratings()->avg('rate') ?? 0,
-                        'photo_url'          => $rating->reviewer->photo->first()
-                                            ? asset('storage/' . $rating->reviewer->photo->first()->url)
-                                            : null,
-                    ],
-                ]),
+                    ? asset('storage/' . $this->user->photo->first()->url)
+                    : null,
+
+
+                'ratings' => $this->user->ratingsReceived->map(function ($rating) {
+                    return [
+                        'id' => $rating->id,
+                        'rate' => $rating->rate,
+                        'review' => $rating->review,
+                        'reviewer' => [
+                            'id' => $rating->reviewer->id,
+                            'name' => $rating->reviewer->name,
+                            'photo_url' => $rating->reviewer->photo->first()
+                                ? asset('storage/' . $rating->reviewer->photo->first()->url)
+                                : null,
+                        ],
+                    ];
+                }),
             ],
         ];
     }

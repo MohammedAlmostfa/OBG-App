@@ -335,10 +335,15 @@ class ItemService
                 'category:id,name',
                 'subCategory:id,name',
                 'photos',
-                'user.ratings:user_id,review,rate',
-                'user.ratings.reviewer:id,name',
-                'user.ratings.reviewer.photo',
-            ])->findOrFail($id);
+                 'user.ratingsReceived' => fn($q) => $q->latest()->limit(5)
+                        ->select('id', 'rate', 'review', 'user_id', 'rated_user_id')
+                        ->with([
+                            'reviewer:id,name',
+                            'reviewer.photo:id,photoable_id,photoable_type,url'
+                        ]),
+
+            ])
+            ->findOrFail($id);
 
             // Get similar items from the same sub-category (excluding current)
             $similarItems = Item::query()

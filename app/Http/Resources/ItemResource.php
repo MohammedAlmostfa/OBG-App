@@ -18,11 +18,10 @@ class ItemResource extends JsonResource
             'id'        => $this->id,
             'name'      => $this->name,
             'price'     => (float) $this->price,
-
-'photo_url' => $this->photos->first()
-    ? asset('storage/' . $this->photos->first()->url)
-    : null,
- 'is_saved'  => (bool) ($this->is_saved ?? false),
+            'photo_url' => $this->photos->first()
+                ? asset('storage/' . $this->photos->first()->url)
+                : null,
+            'is_saved'  => (bool) ($this->is_saved ?? false),
         ];
     }
 }
