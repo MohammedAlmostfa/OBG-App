@@ -23,7 +23,7 @@ class ItemFactory extends Factory
             'type' => $this->faker->randomElement([1, 0]),
                         'availability' => $this->faker->randomElement([1, 0]),
             'status' => $this->faker->randomElement([1, 0]),
-            'description' => $this->faker->paragraph(),
+ 'description' => substr($this->faker->paragraph(), 0, 255), // قص النص
 
         ];
     }
