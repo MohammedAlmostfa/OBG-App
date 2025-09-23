@@ -380,6 +380,7 @@ public function getLowestItems()
             $item = Item::with([
                 'user:id,name',
                 'user.photo',
+                'user.profile:user_id,phone',
                 'category:id,name',
                 'subCategory:id,name',
                 'photos',
