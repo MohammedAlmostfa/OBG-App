@@ -4,6 +4,8 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Http\File as HttpFile;
 use App\Models\Item;
 use App\Models\Photo;
 
@@ -11,7 +13,7 @@ class ItemSeeder extends Seeder
 {
     public function run(): void
     {
-        // مجلد الصور
+        // مجلد الصور المصدر
         $imageDir = base_path('database/seeders/images');
         $images   = File::files($imageDir);
 
@@ -24,20 +26,22 @@ class ItemSeeder extends Seeder
         $items = Item::factory(10)->create();
 
         foreach ($items as $index => $item) {
-            // اختار صورة بشكل دوري
             $imageFile = $images[$index % count($images)];
 
-            // المسار النسبي للربط مباشرة
-            $relativePath = 'items/photos/' . $imageFile->getFilename();
+            // حول الصورة لكائن File ليعمل Laravel putFile
+            $file = new HttpFile($imageFile->getRealPath());
 
-            // خزّن المسار بالجدول
+            // انسخ الصورة لمجلد storage/app/public/items/photos
+            $storedPath = Storage::disk('public')->putFile('items/photos', $file);
+
+            // خزّن المسار بالجدول (مسار نسبي داخل storage)
             Photo::create([
                 'photoable_id'   => $item->id,
                 'photoable_type' => Item::class,
-                'url'            => $relativePath, // ex: items/photos/img1.jpg
+                'url'            => $storedPath, // ex: items/photos/abc123.jpg
             ]);
         }
 
-        $this->command->info('✅ تم ربط الصور بالمنتجات');
+        $this->command->info('✅ تم نسخ وربط الصور بالمنتجات');
     }
 }
