@@ -23,18 +23,16 @@ class ItemSeeder extends Seeder
         }
 
         // أنشئ 10 منتجات
-        $items = Item::factory(10)->create();
+        $items = Item::factory(100)->create();
 
         foreach ($items as $index => $item) {
             $imageFile = $images[$index % count($images)];
 
-            // حول الصورة لكائن File ليعمل Laravel putFile
             $file = new HttpFile($imageFile->getRealPath());
 
-            // انسخ الصورة لمجلد storage/app/public/items/photos
+
             $storedPath = Storage::disk('public')->putFile('items/photos', $file);
 
-            // خزّن المسار بالجدول (مسار نسبي داخل storage)
             Photo::create([
                 'photoable_id'   => $item->id,
                 'photoable_type' => Item::class,
