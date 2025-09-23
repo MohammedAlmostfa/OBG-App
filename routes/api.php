@@ -48,20 +48,35 @@ Route::get('subCategories/category/{id}', [SubCategoryController::class, 'index'
 
 Route::middleware('jwt')->group(function () {
 
+    // Profile routes
     Route::apiResource('profile', ProfileController::class);
-    Route::get('items/near', [ItemController::class, 'nearitem']);
+    Route::get('/me', [ProfileController::class, 'getMe']);
 
-    Route::get('items/user/{id}', [Usercontroller::class, 'getUserItems']);
-    Route::get('ratings/user/{id}', [Usercontroller::class, 'getUserRatings']);
-    Route::get('user/{id}', [Usercontroller::class, 'getUserData']);
-    Route::get('savedItems', [Usercontroller::class, 'getSavedItems']);
-    Route::get('favouriteUsers', [Usercontroller::class, 'getFavouriteUsers']);
+    // Item routes
+    Route::prefix('items')->group(function () {
+        Route::get('nearest', [ItemController::class, 'getNearestItems'])->name('items.nearest');
+        Route::get('lowest', [ItemController::class, 'getLowestItem'])->name('items.lowest'); // fixed spelling
+        Route::get('lastest', [ItemController::class, 'getLastestItems'])->name('items.lastest');
+
+        Route::get('user/{id}', [UserController::class, 'getUserItems'])->name('items.user');
+
+        // Save / Unsave items
+        Route::post('{id}/save', [SavedItemController::class, 'save'])->name('items.save');
+        Route::delete('{id}/unsave', [SavedItemController::class, 'unSave'])->name('items.unsave');
+    });
+
+    // User routes
+    Route::prefix('users')->group(function () {
+        Route::get('{id}', [UserController::class, 'getUserData'])->name('users.show');
+        Route::post('{id}/add', [FavoriteUserController::class, 'add'])->name('users.addFavorite');
+        Route::delete('{id}/remove', [FavoriteUserController::class, 'remove'])->name('users.removeFavorite');
+        Route::get('favouriteUsers', [UserController::class, 'getFavouriteUsers'])->name('users.favourite');
+    });
+
+    // Ratings routes
     Route::apiResource('ratings', RatingController::class);
+    Route::get('ratings/user/{id}', [UserController::class, 'getUserRatings'])->name('ratings.user');
 
-    Route::get('/me', [ProfileController::class, 'getme']); // Retrieves details of the logged-in user
-    Route::post('items/{id}/save', [SavedItemController::class, 'save']);
-    Route::delete('items/{id}/unsave', [SavedItemController::class, 'unSave']);
-    Route::post('users/{id}/add', [FavoriteUserController::class, 'add']);
-    Route::delete('users/{id}/remove', [FavoriteUserController::class, 'remove']);
+    // Full CRUD for items
     Route::apiResource('items', ItemController::class);
 });

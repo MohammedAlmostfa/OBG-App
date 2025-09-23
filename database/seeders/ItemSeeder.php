@@ -13,7 +13,7 @@ class ItemSeeder extends Seeder
 {
     public function run(): void
     {
-        // مجلد الصور المصدر
+
         $imageDir = base_path('database/seeders/images');
         $images   = File::files($imageDir);
 
@@ -22,7 +22,7 @@ class ItemSeeder extends Seeder
             return;
         }
 
-        // أنشئ 10 منتجات
+
         $items = Item::factory(100)->create();
 
         foreach ($items as $index => $item) {
