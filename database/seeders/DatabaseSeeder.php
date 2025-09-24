@@ -27,6 +27,9 @@ class DatabaseSeeder extends Seeder
             CategorySeeder::class,
             SubCategorySeeder::class,
             ItemSeeder::class,
+            UserSeeder::class,
+            ProfileSeeder::class,
+            RatingSeeder::class,
 
         ]);
     }
