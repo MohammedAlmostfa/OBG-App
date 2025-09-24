@@ -17,7 +17,7 @@ class ProfileResource extends JsonResource
             'lastName'      => $this->last_name,
             'averageRating' => $this->ratings_received_avg_rate ?? 0,
             'countRatings'  => $this->ratings_received_count ?? 0,
-            'photo_url'     => $this->photo?->first()->url
+            'photo_url' => optional($this->photo?->first())->url
                 ? asset('storage/' . $this->photo->first()->url)
                 : null,
             'birthday'  => $this->profile->birthday ?? null,
