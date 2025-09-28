@@ -95,17 +95,24 @@ class UserService
 public function getUserData($id)
 {
     try {
-        $user = User::select(['id', 'name'])
-            ->withCount(['ratings as countRatings', 'items as countItems'])
-            ->addSelect([
-                DB::raw("CASE WHEN EXISTS (
-                    SELECT 1 FROM users_users
-                    WHERE users_users.favorite_user_id = {$id}
-                      AND users_users.user_id = " . (int)auth()->id() . "
-                ) THEN 1 ELSE 0 END AS is_favourite")
-            ])
-            ->findOrFail($id);
 
+            $user = User::select('id', 'name')
+                ->with([
+                    'photo:id,photoable_id,photoable_type,url',
+                    'profile:id,user_id,birthday,phone,address,latitude,longitude',
+                    'ratingsReceived' => fn($q) => $q->latest()->limit(5)
+                        ->select('id', 'rate', 'review', 'user_id', 'rated_user_id')
+                        ->with([
+                            'reviewer:id,name',
+                            'reviewer.photo:id,photoable_id,photoable_type,url'
+                        ]),
+                    'items' => fn($q) => $q->latest()->limit(5)
+                        ->select('id', 'name', 'price', 'user_id')
+
+                ])
+                ->withAvg('ratingsReceived', 'rate')
+                ->withCount('ratingsReceived')
+                ->find($id);
         return [
             'status'  => 200,
             'message' => __('user.get_successful'),

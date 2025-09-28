@@ -2,12 +2,13 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Resources\UserRatingResource;
 use App\Models\User;
 use App\Services\UserService;
+use Illuminate\Http\JsonResponse;
 use App\Http\Resources\ItemResource;
 use App\Http\Resources\UserResource;
-use Illuminate\Http\JsonResponse;
+use App\Http\Resources\profileResource;
+use App\Http\Resources\UserRatingResource;
 
 /**
  * Class UserController
@@ -80,7 +81,7 @@ class UserController extends Controller
 
         // Return appropriate JSON response
         return $result['status'] === 200
-            ? self::success($result['data'], $result['message'], $result['status'])
+              ? self::success( new profileResource($result['data']), $result['message'], $result['status'])
             : self::error(null, $result['message'], $result['status']);
     }
 
@@ -96,7 +97,7 @@ class UserController extends Controller
 
         // Return appropriate JSON response
         return $result['status'] === 200
-            ? self::zz(ItemResource::collection(collect($result['data'])), $result['message'], $result['status'])
+            ? self::success(ItemResource::collection(collect($result['data'])), $result['message'], $result['status'])
             : self::error(null, $result['message'], $result['status']);
     }
 
