@@ -63,6 +63,8 @@ Route::middleware('jwt')->group(function () {
         // Save / Unsave items
         Route::post('{id}/save', [SavedItemController::class, 'save'])->name('items.save');
         Route::delete('{id}/unsave', [SavedItemController::class, 'unSave'])->name('items.unsave');
+        Route::get('/save', [UserController::class, 'getSavedItems']);
+
     });
 
     // User routes
