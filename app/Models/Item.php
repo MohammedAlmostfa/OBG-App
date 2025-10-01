@@ -2,11 +2,13 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Models\User;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Casts\Attribute;
-use App\Models\User;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Item extends Model
 {
@@ -105,38 +107,57 @@ class Item extends Model
      * @param array $filters
      * @return \Illuminate\Database\Eloquent\Builder
      */
-    public function scopeFilter($query, $filters)
-    {
-        if (!empty($filters['category_id'])) {
-            $query->where('category_id', $filters['category_id']);
-        }
-
-        if (!empty($filters['sub_category_id'])) {
-            $query->where('sub_category_id', $filters['sub_category_id']);
-        }
-
-        if (!empty($filters['name'])) {
-            $query->where('name', 'like', '%' . $filters['name'] . '%');
-        }
-
-        if (!empty($filters['price'])) {
-            $query->where('price', $filters['price']);
-        }
-
-        if (!empty($filters['type'])) {
-            $query->where('type', $filters['type']);
-        }
-
-        if (!empty($filters['status'])) {
-            $query->where('status', $filters['status']);
-        }
-
-        if (!empty($filters['availability'])) {
-            $query->where('availability', $filters['availability']);
-        }
-
-        return $query;
+public function scopeFilter($query, $filters)
+{
+    // ✅ category
+    if (!empty($filters['category_id'])) {
+        $query->where('category_id', $filters['category_id']);
     }
+
+    // ✅ sub-category
+    if (!empty($filters['sub_category_id'])) {
+        $query->where('sub_category_id', $filters['sub_category_id']);
+    }
+
+    // ✅ name (search)
+    if (!empty($filters['name'])) {
+        $query->where('name', 'like', '%' . $filters['name'] . '%');
+    }
+
+    // ✅ exact price
+    if (!empty($filters['price'])) {
+        $query->where('price', $filters['price']);
+    }
+
+    // ✅ type
+    if (!empty($filters['type'])) {
+        $query->where('type', $filters['type']);
+    }
+
+    // ✅ status
+    if (!empty($filters['status'])) {
+        $query->where('status', $filters['status']);
+    }
+
+    // ✅ availability
+    if (!empty($filters['availability'])) {
+        $query->where('availability', $filters['availability']);
+    }
+
+
+    if (!empty($filters['lowest']) && $filters['lowest'] == true) {
+        $query->orderBy('price', 'asc');
+    }
+
+
+    if (!empty($filters['nearest']) && $filters['nearest'] == true) {
+        $query->withDistance();
+
+    }
+
+    return $query;
+}
+
 
     /**
      * Accessor & Mutator for the `type` attribute.
@@ -175,5 +196,41 @@ class Item extends Model
             // set: fn($value) => collect(self::AVAILABILITY_MAP)
             //     ->search(fn($status) => in_array($value, $status, true)) ?? 1
         );
+
+
     }
+
+public function scopeWithIsSaved($query)
+{
+    return $query->addSelect([
+        DB::raw('CASE WHEN EXISTS (
+            SELECT 1 FROM item_user
+            WHERE item_user.item_id = items.id
+              AND item_user.user_id = ' . (int)auth()->id() . '
+        ) THEN 1 ELSE 0 END AS is_saved')
+    ]);
+}
+public function scopeWithDistance($query)
+{
+    $user = auth()->user();
+
+    if (!$user || !$user->profile || !$user->profile->latitude || !$user->profile->longitude) {
+        return $query;
+    }
+$user->load('profile');
+    $lat = $user->profile->latitude;
+    $lng = $user->profile->longitude;
+Log::error('Latitude value', ['lat' => $lat]);
+Log::error('Longitude value', ['lng' => $lng]);
+
+    return $query->selectRaw(
+        "(6371 * acos(cos(radians(?)) * cos(radians(profiles.latitude))
+          * cos(radians(profiles.longitude) - radians(?))
+          + sin(radians(?)) * sin(radians(profiles.latitude)))) AS distance",
+        [$lat, $lng, $lat]
+    );
+}
+
+
+
 }

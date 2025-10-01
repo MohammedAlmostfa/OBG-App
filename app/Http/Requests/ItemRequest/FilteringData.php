@@ -24,11 +24,21 @@ class FilteringData extends FormRequest
      */
     public function rules(): array
     {
-        return [
-                'category_id' => 'nullable|integer|exists:categories,id',
-            'subCategory_id' => 'nullable|integer|exists:sub_categories,id',
-        ];
-    }
+    return [
+        'category_id'     => 'nullable|integer|exists:categories,id',
+        'subCategory_id'  => 'nullable|integer|exists:sub_categories,id',
+        'name'            => 'nullable|string|max:255',
+        'price'           => 'nullable|numeric|min:0',
+        'type'            => 'nullable|string|max:50',
+        'status'          => 'nullable|integer|in:0,1',
+        'availability'    => 'nullable|integer|in:0,1',
+        'lowest'        => 'nullable|boolean',
+        'nearest'         => 'nullable|boolean',   // لترتيب حسب الأقرب
+
+    ];
+}
+
+
      /**
      * Handle a failed validation attempt.
      * This method is called when validation fails.

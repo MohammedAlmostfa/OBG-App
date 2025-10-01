@@ -18,167 +18,138 @@ use Illuminate\Support\Facades\Storage;
  * @package App\Services
  */
 class ItemService
-{/**
- * Get the latest items with optional filtering.
- *
- * @param array $filteringData Optional key-value array of filters.
- * @return array Returns status, message, and paginated items.
- */
-public function getLastestItems($filteringData)
 {
-    try {
-        $items = Item::query()
-            ->select('items.*')
-            // Fetch only the first photo for each item
-            ->with(['photos' => function ($query) {
-                $query->select('id', 'url', 'photoable_id')
-                    ->orderBy('id')
-                    ->limit(1);
-            }])
-            // Add column to check if the item is saved by the current user
-            ->addSelect([
-                DB::raw('CASE WHEN EXISTS (
-                    SELECT 1 FROM item_user
-                    WHERE item_user.item_id = items.id
-                      AND item_user.user_id = ' . (int)auth()->id() . '
-                ) THEN 1 ELSE 0 END AS is_saved')
-            ])
-            // Apply filters if provided
-            ->when(!empty($filteringData), function ($query) use ($filteringData) {
-                $query->filter($filteringData);
-            })
-            ->orderBy('id', 'desc') // Order by newest
-            ->where('availability', 1) // Only available items
-            ->paginate(10); // Paginate results
+    /**
+     * Get the latest items with optional filtering.
+     *
+     * @param array $filteringData Optional key-value array of filters.
+     * @return array Returns status, message, and paginated items.
+     */
+    public function getLastestItems($filteringData)
+    {
+        try {
+            $items = Item::query()
+                ->select('items.*')
+                // Fetch only the first photo for each item
+                ->with(['photos' => function ($query) {
+                    $query->select('id', 'url', 'photoable_id')
+                        ->orderBy('id')
+                        ->limit(1);
+                }])
+                ->withIsSaved()
+                ->join('users', 'items.user_id', '=', 'users.id')
+                ->join('profiles', 'users.id', '=', 'profiles.user_id')
+                ->when(!empty($filteringData), function ($query) use ($filteringData) {
+                    $query->filter($filteringData);
+                })
 
-        return [
-            'status' => 200,
-            'message' => __('item.get_successful'),
-            'data' => $items
-        ];
-    } catch (Exception $e) {
-        Log::error('Error in getLastItems: ' . $e->getMessage());
+                ->orderBy('id', 'desc') // Order by newest
+                ->where('availability', 1) // Only available items
+                ->paginate(10); // Paginate results
 
-        return [
-            'status' => 500,
-            'message' => [
-                'errorDetails' => __('general.failed'),
-            ],
-        ];
-    }
-}
-
-
-/**
- * Get nearby items within 5km radius of the authenticated user.
- *
- * Uses Haversine formula to calculate distance.
- *
- * @return array
- */
-public function getNearestItems()
-{
-    try {
-        $user = auth()->user();
-
-        if (!$user || !$user->profile) {
             return [
-                'status' => 404,
-                'message' => __('profile.not_found'),
+                'status' => 200,
+                'message' => __('item.get_successful'),
+                'data' => $items
+            ];
+        } catch (Exception $e) {
+            Log::error('Error in getLastItems: ' . $e->getMessage());
+
+            return [
+                'status' => 500,
+                'message' => [
+                    'errorDetails' => __('general.failed'),
+                ],
             ];
         }
-
-        $lat = $user->profile->latitude;
-        $lng = $user->profile->longitude;
-
-        $items = Item::query()
-            ->select('items.*')
-            // Haversine distance calculation
-            ->selectRaw(
-                "(6371 * acos(cos(radians(?)) * cos(radians(profiles.latitude))
-                  * cos(radians(profiles.longitude) - radians(?))
-                  + sin(radians(?)) * sin(radians(profiles.latitude)))) AS distance",
-                [$lat, $lng, $lat]
-            )
-            ->join('users', 'items.user_id', '=', 'users.id')
-            ->join('profiles', 'users.id', '=', 'profiles.user_id')
-            ->with(['photos' => function ($query) {
-                $query->select('id', 'url', 'photoable_id')
-                    ->orderBy('id')
-                    ->limit(1);
-            }])
-            ->addSelect([
-                DB::raw('CASE WHEN EXISTS (
-                    SELECT 1 FROM item_user
-                    WHERE item_user.item_id = items.id
-                      AND item_user.user_id = ' . (int)auth()->id() . '
-                ) THEN 1 ELSE 0 END AS is_saved')
-            ])
-            ->where('items.status', 1)
-            ->having('distance', '<=', 5) // Only within 5km
-            ->orderBy('distance', 'asc')  // Closest first
-            ->paginate(10);
-
-        return [
-            'status'  => 200,
-            'message' => __('item.get_successful'),
-            'data'    => $items,
-        ];
-    } catch (Exception $e) {
-        Log::error('Error in getNearItems: ' . $e->getMessage());
-
-        return [
-            'status' => 500,
-            'message' => [
-                'errorDetails' => __('general.failed'),
-            ],
-        ];
     }
-}
 
-/**
- * Get the Lowest items.
- *
- * @return array
- */
-public function getLowestItems()
-{
-    try {
-        $LowestItems = Item::query()
-            ->select('items.*')
-            ->with(['photos' => function ($query) {
-                $query->select('id', 'url', 'photoable_id')
-                    ->orderBy('id')
-                    ->limit(1);
-            }])
-            ->addSelect([
-                DB::raw('CASE WHEN EXISTS (
-                    SELECT 1 FROM item_user
-                    WHERE item_user.item_id = items.id
-                      AND item_user.user_id = ' . (int)auth()->id() . '
-                ) THEN 1 ELSE 0 END AS is_saved')
-            ])
-            ->where('availability', 1)
-            ->orderBy('price', 'asc')
-            ->limit(10)
-          ->paginate(10);
 
-        return [
-            'status' => 200,
-            'message' => __('item.get_successful'),
-            'data' =>  $LowestItems,
-        ];
-    } catch (Exception $e) {
-        Log::error('Error in getLowestItems: ' . $e->getMessage());
+    /**
+     * Get nearby items within 5km radius of the authenticated user.
+     *
+     * Uses Haversine formula to calculate distance.
+     *
+     * @return array
+     */
+    public function getNearestItems()
+    {
+        try {
 
-        return [
-            'status' => 500,
-            'message' => [
-                'errorDetails' => __('general.failed'),
-            ],
-        ];
+
+            $items = Item::query()
+                ->select('items.*')
+                ->withDistance()
+                ->withIsSaved()
+                ->with(['photos' => function ($query) {
+                    $query->select('id', 'url', 'photoable_id')
+                        ->orderBy('id')
+                        ->limit(1);
+                }])
+                ->join('users', 'items.user_id', '=', 'users.id')
+                ->join('profiles', 'users.id', '=', 'profiles.user_id')
+                ->where('items.status', 1)
+                ->having('distance', '<=', 5)
+                ->orderBy('distance', 'asc')
+                ->where('availability', 1)
+                ->paginate(10);
+
+            return [
+                'status'  => 200,
+                'message' => __('item.get_successful'),
+                'data'    => $items,
+            ];
+        } catch (Exception $e) {
+            Log::error('Error in getNearItems: ' . $e->getMessage());
+
+            return [
+                'status' => 500,
+                'message' => [
+                    'errorDetails' => __('general.failed'),
+                ],
+            ];
+        }
     }
-}
+
+    /**
+     * Get the Lowest items.
+     *
+     * @return array
+     */
+    public function getLowestItems()
+    {
+        try {
+            $LowestItems = Item::query()
+                ->select('items.*')
+                ->with(['photos' => function ($query) {
+                    $query->select('id', 'url', 'photoable_id')
+                        ->orderBy('id')
+                        ->limit(1);
+                }])
+                ->withIsSaved()
+                ->where('availability', 1)
+                ->orderBy('price', 'asc')
+                ->where('availability', 1)
+                ->limit(10)
+                ->paginate(10);
+
+            return [
+                'status' => 200,
+                'message' => __('item.get_successful'),
+                'data' =>  $LowestItems,
+            ];
+        } catch (Exception $e) {
+            Log::error('Error in getLowestItems: ' . $e->getMessage());
+
+            return [
+                'status' => 500,
+                'message' => [
+                    'errorDetails' => __('general.failed'),
+                ],
+            ];
+        }
+    }
+
 
     /**
      * Store a new item in the database.

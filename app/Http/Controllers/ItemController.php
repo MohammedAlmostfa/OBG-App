@@ -135,6 +135,11 @@ class ItemController extends Controller
             : self::error(null, $result['message'], $result['status']);
     }
 
+    public function getItemBySearch()
+    {
+
+
+    }
     /**
      * Store a newly created item in storage.
      *
