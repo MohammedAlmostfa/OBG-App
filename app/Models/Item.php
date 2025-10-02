@@ -121,7 +121,7 @@ public function scopeFilter($query, $filters)
 
     // ✅ name (search)
     if (!empty($filters['name'])) {
-        $query->where('name', 'like', '%' . $filters['name'] . '%');
+        $query->where('items.name', 'like', '%' . $filters['name'] . '%');
     }
 
     // ✅ exact price
