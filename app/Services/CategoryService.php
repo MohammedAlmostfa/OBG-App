@@ -21,11 +21,12 @@ class CategoryService
                     return [
                         'id' => $category->id,
                         'name' => $category->name,
-                        'photo' => $category->photo->first()?->url ?? null,
+                        'photo_url' => $category->photo->first()
+                            ? asset('storage/' . $category->photo->first()->url)
+                            : null,
                         'subCategories' => $category->subCategories,
                     ];
                 });
-
 
             return [
                 'message' => 'Categories retrieved successfully',
