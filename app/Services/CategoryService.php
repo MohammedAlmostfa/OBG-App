@@ -21,9 +21,7 @@ class CategoryService
                     return [
                         'id' => $category->id,
                         'name' => $category->name,
-                        'photo_url' => $category->photo->first()
-                            ? asset('storage/' . $category->photo->first()->url)
-                            : null,
+                        'photo_url' => $category->photo->first()->url,
                         'subCategories' => $category->subCategories,
                     ];
                 });

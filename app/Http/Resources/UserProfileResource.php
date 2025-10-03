@@ -17,9 +17,8 @@ class UserProfileResource extends JsonResource
             'averageRating' => $this->averageRatings() ?? 0,
             'phone'         => $this->profile->phone ?? null,
             'countRatings'  => $this->countRatings() ?? 0,
-            'photo_url'     => $this->photo->first()
-                ? asset('storage/' . $this->photo->first()->url)
-                : null,
+            'photo_url'     => $this->photo->first()->url,
+
         ];
     }
 }

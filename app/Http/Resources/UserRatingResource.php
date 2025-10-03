@@ -19,9 +19,8 @@ class UserRatingResource extends JsonResource
             'reviewer'   => [
                 'id'             => $this->reviewer->id ?? null,
                 'name'           => $this->reviewer->name ?? null,
-                'photo_url'      => $this->reviewer->photo->first()
-                    ? asset('storage/' . $this->reviewer->photo->first()->url)
-                    : null,
+                'photo_url'      => $this->reviewer->photo->first()->url,
+
             ],
         ];
     }
