@@ -14,14 +14,12 @@ class ItemResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
-        $firstPhoto = $this->photos->first();
-
         return [
             'id'        => $this->id,
             'name'      => $this->name,
             'price'     => (float) $this->price,
-            'photo_url' => $firstPhoto
-                ? $request->getSchemeAndHttpHost() . '/storage/' . ltrim($firstPhoto->url, '/')
+            'photo_url' => $this->photos->first()
+                ? asset('storage/' . $this->photos->first()->url)
                 : null,
             'is_saved'  => (bool) ($this->is_saved ?? false),
         ];
