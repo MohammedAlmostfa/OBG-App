@@ -22,7 +22,7 @@ class CategoryService
                         'id' => $category->id,
                         'name' => $category->name,
                         'photo_url' => $category->photo->first()
-                            ? asset('storage/' . $category->photo->first()->url)
+                            ? request()->getSchemeAndHttpHost() . '/storage/' . ltrim($category->photo->first()->url, '/')
                             : null,
                         'subCategories' => $category->subCategories,
                     ];
@@ -30,14 +30,14 @@ class CategoryService
 
             return [
                 'message' => 'Categories retrieved successfully',
-                'status' => 200,
-                'data' => $categories,
+                'status'  => 200,
+                'data'    => $categories,
             ];
         } catch (Exception $e) {
             Log::error('Error in getCategories: ' . $e->getMessage());
 
             return [
-                'status' => 500,
+                'status'  => 500,
                 'message' => [
                     'errorDetails' => __('general.failed'),
                 ],
