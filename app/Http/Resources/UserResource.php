@@ -17,7 +17,9 @@ class UserResource extends JsonResource
         return [
             'id' => $this->id,
             'name' => $this->name,
-            'photo_url' => optional($this->photo->first())->url,
+            'photo_url' => $this->photo && $this->photo->first()
+    ? $this->photo->first()->url   // مجرد المسار النسبي
+    : null,
 
         ];
     }

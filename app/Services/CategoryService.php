@@ -21,7 +21,9 @@ class CategoryService
                     return [
                         'id' => $category->id,
                         'name' => $category->name,
-                        'photo_url' => $category->photo->first()->url,
+                        'photo_url' => $category->photo && $category->photo->first()
+                            ? $category->photo->first()->url
+                            : null,
                         'subCategories' => $category->subCategories,
                     ];
                 });
