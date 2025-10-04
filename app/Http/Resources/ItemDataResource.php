@@ -29,7 +29,7 @@ class ItemDataResource extends JsonResource
 
     'photos' => $this->photos->map(fn($photo) => [
                 'id'  => $photo->id,
-                'url' => asset('storage/' . $photo->url),
+                'url' =>      $this->photos->first()->url
             ]),
 
         ];
