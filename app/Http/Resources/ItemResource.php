@@ -18,10 +18,9 @@ class ItemResource extends JsonResource
             'id'        => $this->id,
             'name'      => $this->name,
             'price'     => (float) $this->price,
-            'photos_url' => $this->photos->map(function ($photo) {
-                return $photo->url;
-            })->toArray(),
-
+           'photo_url' => $this->photos && $this->photos->first()
+    ? $this->photos->first()->url
+    : null,
             'is_saved'  => (bool) ($this->is_saved ?? false),
         ];
     }
