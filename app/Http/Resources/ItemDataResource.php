@@ -27,9 +27,10 @@ class ItemDataResource extends JsonResource
                 'name' => $this->subCategory->name ?? null,
             ],
 
-  'photos_url' => $this->photos->map(function ($photo) {
-                return $photo->url;
-            })->toArray(),
+    'photos' => $this->photos->map(fn($photo) => [
+                'id'  => $photo->id,
+                'url' => asset('storage/' . $photo->url),
+            ]),
 
         ];
     }
