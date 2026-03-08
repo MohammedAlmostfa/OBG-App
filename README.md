@@ -1,4 +1,4 @@
-# PG - Old but Gold
+# OPG - Old but Gold
 
 PG (Old but Gold) is a marketplace application designed for buying and selling used tools and equipment.  
 The platform allows users to list products they want to sell while other users can browse, search, filter, and submit purchase requests.
