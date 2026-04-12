@@ -15,7 +15,6 @@ class ForgetPasswordRequestService
     {
         return  [
             'password',
-            'chat id',
             'email',
             'code',
         ];
