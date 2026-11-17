@@ -1,6 +1,6 @@
-# OPG (Old but Gold)
+# OBG (Old but Gold)
 
-OPG is a platform for buying and selling used tools and equipment. Users can list their items, browse other products, filter and search efficiently, and submit purchase requests. The app aims to provide a smooth, secure, and scalable experience.
+OBG is a platform for buying and selling used tools and equipment. Users can list their items, browse other products, filter and search efficiently, and submit purchase requests. The app aims to provide a smooth, secure, and scalable experience.
 
 ---
 
